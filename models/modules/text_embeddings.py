@@ -53,6 +53,13 @@ from typing import Dict, List
 import itertools
 from copy import deepcopy
 
+from transformers import T5Tokenizer, T5EncoderModel
+import torch.nn as nn
+from typing import List
+
+def generate_padding_mask(input_ids, pad_token_id):
+    return (input_ids != pad_token_id).long()
+
 @META_TEXT_EMBEDDING.register()
 class UsualEmbedding(nn.Module):
     def __init__(self, config, vocab):
@@ -71,7 +78,9 @@ class UsualEmbedding(nn.Module):
             )
 
     def forward(self, tokens):
-        padding_masks = generate_padding_mask(tokens, padding_idx=self.padding_idx).to(tokens.device)
+        # padding_masks = generate_padding_mask(tokens, padding_idx=self.padding_idx).to(tokens.device)
+        padding_masks = generate_padding_mask(tokens, pad_token_id=self.padding_idx).to(tokens.device)
+
         seq_len = tokens.shape[-1]
         sequential_masks = generate_sequential_mask(seq_len).to(tokens.device)
 
@@ -568,4 +577,42 @@ class XLMRobertaEmbedding(nn.Module):
         out = self.proj(features)
         out = self.dropout(self.gelu(out))
 
+        return out, padding_mask
+    
+
+@META_TEXT_EMBEDDING.register()
+class T5Embedding(nn.Module):
+    def __init__(self, config, vocab):
+        super().__init__()
+
+        self.device = config.DEVICE
+        
+        # Khởi tạo tokenizer
+        self.tokenizer = T5Tokenizer.from_pretrained(config.PRETRAINED_NAME)
+        
+        # Khởi tạo mô hình T5
+        self.embedding = T5EncoderModel.from_pretrained(config.PRETRAINED_NAME)
+        
+        # if config.FREEZE_WEIGHTS:
+        #     for param in self.embedding.parameters():
+        #         param.requires_grad = False
+        
+        # Chiếu đầu ra về D_MODEL
+        self.proj = nn.Linear(self.embedding.config.d_model, config.D_MODEL)
+        self.gelu = nn.GELU()
+        self.dropout = nn.Dropout(config.DROPOUT)
+
+    def forward(self, questions: List[str]):
+        # Tokenize input
+        inputs = self.tokenizer(questions, return_tensors="pt", padding=True, truncation=True).input_ids.to(self.device)
+        # inputs.shape = (bs, seq_len)
+        # self.tokenizer.pad_token_id.shape = 1
+        padding_mask = generate_padding_mask(inputs, pad_token_id=self.tokenizer.pad_token_id)
+       # Lấy embedding từ T5
+        features = self.embedding(input_ids=inputs, attention_mask=padding_mask).last_hidden_state
+        
+        # Chiếu về D_MODEL và apply activation
+        out = self.proj(features)
+        out = self.dropout(self.gelu(out))
+        
         return out, padding_mask

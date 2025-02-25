@@ -1,43 +1,55 @@
 TASK: ClassificationTask
 
 DATASET:
-  TYPE: MultilingualImageQuestionClassificationDataset
-  BATCH_SIZE: 10
-  WORKERS: 0
-  MIN_FREQ: 1
-  SCENE_TEXT_THRESHOLD: 0.3
+  FEATURE_DATASET:
+    TYPE: Vivqav2FeatureDataset
+    BATCH_SIZE: 64
+    WORKERS: 0
+    FEATURE_PATH:
+      FEATURES: features/vinvl_vinvl
+      SCENE_TEXT: null
+      IMAGE: data/vivqa_v2/images
   VOCAB:
-    TYPE: MultilingualClassificationVocab
+    TYPE: VQAv2ClassificationVocab
     TOKENIZER: null
+    MIN_FREQ: 1
     WORD_EMBEDDING: null
     WORD_EMBEDDING_CACHE: null
     BOS_TOKEN: <bos>
     EOS_TOKEN: <eos>
     PAD_TOKEN: <pad>
     UNK_TOKEN: <unk>
-    USE_MAPPING: False
+    IMG_TOKEN: <img>
+    FEAT_TOKEN: <feat>
+    BOX_TOKEN: <box>
+    QUESTION_TOKEN: <question>
+    ANSWER_TOKEN: <answer>
     JSON_PATH:
-      TRAIN: features/OpenViVQA/annotations/OpenViVQA_train.json
-      DEV: features/OpenViVQA/annotations/OpenViVQA_dev.json
-      TEST: features/OpenViVQA/annotations/OpenViVQA_test.json
+      TRAIN: data/vivqa_v2/vivqa_v2_train.json
+      DEV: data/vivqa_v2/vivqa_v2_dev.json
+      TEST: data/vivqa_v2/vivqa_v2_test.json
   JSON_PATH:
-    TRAIN: features/EVJVQA/annotations/evjvqa_train.json
-    DEV: features/EVJVQA/annotations/evjvqa_dev.json
-    TEST: features/EVJVQA/annotations/evjvqa_public_test.json
-  FEATURE_PATH:
-    FEATURES: null
-    SCENE_TEXT: null
-    IMAGE: features/EVJVQA/images
+    TRAIN: data/vivqa_v2/vivqa_v2_train.json
+    DEV: data/vivqa_v2/vivqa_v2_dev.json
+    TEST: data/vivqa_v2/vivqa_v2_test.json
 
 TRAINING:
   CHECKPOINT_PATH: saved_models
-  LEARNING_RATE: 0.001
-  RL_LEARNING_RATE: 0.000005
+  LEARNING_RATE: 0.002
   WARMUP: 10000
   SCORE: CIDEr
+  GET_SCORES: True
   TRAINING_BEAM_SIZE: 5
   EVALUATING_BEAM_SIZE: 3
   PATIENCE: 5
+  VERBOSE_SCORES:
+    - CIDEr
+    - BLEU
+    - ROUGE
+    - Accuracy
+    - F1
+    - Precision
+    - Recall
 
 MODEL:
   ARCHITECTURE: ViTmBERTClassification
@@ -54,6 +66,11 @@ MODEL:
     ARCHITECTURE: BertEmbedding
     PRETRAINED_NAME: bert-base-multilingual-uncased
     DEVICE: cuda
+    HIDDEN_SIZE: 768
+    NUM_HIDDEN_LAYERS: 12
+    NUM_ATTENTION_HEADS: 12 
+    LOAD_PRETRAINED: False
+    FREEZE_WEIGHTS: False
     D_PRETRAINED_FEATURE: 768
     D_MODEL: 512
     DROPOUT: .1

@@ -15,7 +15,7 @@ class MultilingualVocab(Vocab):
         self.max_question_length = 0
         self.max_answer_length = 0
         for json_dir in json_dirs:
-            json_data = json.load(open(json_dir))
+            json_data = json.load(open(json_dir, encoding='utf8'))
             for ann in json_data["annotations"]:
                 for answer in ann["answers"]:
                     question = ann["question"]

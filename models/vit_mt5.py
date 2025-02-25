@@ -18,7 +18,7 @@ class ViTmT5(BaseTransformer):
         self.text_embedding = build_text_embedding(config.TEXT_EMBEDDING, vocab)
         self.vision_embedding = build_vision_embedding(config.VISION_EMBEDDING)
 
-        self.fusion = nn.Linear(config.MULTIMODAL_FUSION)
+        self.fusion = nn.Linear(in_features=config.MULTIMODAL_FUSION.D_MODEL, out_features=config.MULTIMODAL_FUSION.D_MODEL)
         self.norm = nn.LayerNorm(config.MULTIMODAL_FUSION.D_MODEL)
 
         self.decoder = build_decoder(config.DECODER, vocab)
@@ -32,14 +32,17 @@ class ViTmT5(BaseTransformer):
 
         encoder_features = torch.cat([vision_features, text_features], dim=1) # (3, 49 + 12, 512)
         encoder_features = self.fusion(encoder_features)
+        # print(vision_padding_mask.shape, text_padding_mask.shape)
+        while len(text_padding_mask.shape) < len(vision_padding_mask.shape):
+            text_padding_mask = text_padding_mask.unsqueeze(1)
         encoder_padding_mask = torch.cat([vision_padding_mask, text_padding_mask], dim=-1) # (3, 1, 1, 49 + 12)
 
         answer_tokens = input_features.answer_tokens
-        output = self.decoder(Instance(
+        output = self.decoder(
             answer_tokens=answer_tokens,
             encoder_features=encoder_features,
             encoder_attention_mask=encoder_padding_mask
-        ))
+        )
 
         return output
 

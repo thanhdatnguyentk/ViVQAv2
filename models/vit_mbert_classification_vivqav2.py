@@ -9,7 +9,7 @@ from builders.text_embedding_builder import build_text_embedding
 from utils.instance import Instance
 
 @META_ARCHITECTURE.register()
-class ViTmBERTClassification(BaseClassificationModel):
+class ViTmBERTClassificationViVQAV2(BaseClassificationModel):
     def __init__(self, config, vocab):
         super().__init__(config, vocab)
 

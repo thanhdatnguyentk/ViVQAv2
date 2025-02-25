@@ -24,7 +24,8 @@ class VlspEvjVqaVocab(MultilingualVocab):
         ])
         counter = self.freqs.copy()
     
-        min_freq = max(config.MIN_FREQ, 1)
+        # min_freq = max(config.MIN_FREQ, 1)
+        min_freq = 1
 
         specials = [self.padding_token, self.bos_token, self.eos_token, self.unk_token]
         itos = specials

@@ -27,7 +27,7 @@ class MultilingualImageQuestionDataset(ImageQuestionDataset):
                             "question": ann["question"],
                             "answer": answer,
                             "image_id": ann["image_id"],
-                            "filename": image["filename"]
+                            "filename": image["file_name"]
                         }
                         annotations.append(annotation)
                     break
@@ -60,7 +60,7 @@ class MultilingualImageQuestionDictionaryDataset(ImageQuestionDictionaryDataset)
                         "question": ann["question"],
                         "answers": answers,
                         "image_id": ann["image_id"],
-                        "filename": image["filename"]
+                        "filename": image["file_name"]
                     })
                     break
 
