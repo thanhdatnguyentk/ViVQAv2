@@ -150,10 +150,11 @@ class VlspEvjVqaTask(BaseTask):
             for it, items in enumerate(dataloader):
                 items = items.to(self.device)
                 with torch.no_grad():
-                    outs, _ = self.model.beam_search(items, batch_size=items.batch_size, beam_size=self.evaluating_beam_size, out_size=1)
+                    # outs, _ = self.model.beam_search(items, batch_size=items.batch_size, beam_size=self.evaluating_beam_size, out_size=1)
+                    outs = self.model.generate(input_ids=items.input_ids, attention_mask=items.attention_mask, max_length=self.vocab.max_answer_length, num_beams=self.evaluating_beam_size)
 
                 answers_gt = items.answers
-                answers_gen = self.vocab.decode_answer(outs.contiguous().view(-1, self.vocab.max_answer_length), join_words=False)
+                answers_gen = self.tokenizer.batch_decode(outs, skip_special_tokens=True)
                 for i, (gts_i, gen_i) in enumerate(zip(answers_gt, answers_gen)):
                     gen_i = ' '.join([k for k, g in itertools.groupby(gen_i)])
                     gens['%d_%d' % (it, i)] = [gen_i, ]
@@ -171,7 +172,10 @@ class VlspEvjVqaTask(BaseTask):
         with tqdm(desc='Epoch %d - Training with cross-entropy loss' % self.epoch, unit='it', total=len(self.train_dataloader)) as pbar:
             for it, items in enumerate(self.train_dataloader):
                 items = items.to(self.device)
-                out = self.model(items).contiguous()
+                self.model(items)
+                pbar.update()
+                # out = self.model(items).contiguous()
+                continue
                 shifted_right_answer_tokens = items.shifted_right_answer_tokens
                 self.optim.zero_grad()
                 loss = self.loss_fn(out.view(-1, len(self.vocab)), shifted_right_answer_tokens.view(-1))
@@ -184,6 +188,8 @@ class VlspEvjVqaTask(BaseTask):
                 pbar.set_postfix(loss=running_loss / (it + 1))
                 pbar.update()
                 self.scheduler.step()
+        
+        raise
 
     def train_scst(self):
         # design especially for self-critical sequential learning
@@ -309,10 +315,11 @@ class VlspEvjVqaTask(BaseTask):
                 for it, items in enumerate(self.public_test_dict_dataloader):
                     items = items.to(self.device)
                     with torch.no_grad():
-                        outs, _ = self.model.beam_search(items, batch_size=items.batch_size, beam_size=self.evaluating_beam_size, out_size=1)
+                        # outs, _ = self.model.beam_search(items, batch_size=items.batch_size, beam_size=self.evaluating_beam_size, out_size=1)
+                        outs = self.model.generate(input_ids=items.input_ids, attention_mask=items.attention_mask, max_length=self.vocab.max_answer_length, num_beams=self.evaluating_beam_size)
 
                     answers_gt = items.answers
-                    answers_gen = self.vocab.decode_answer(outs.contiguous().view(-1, self.vocab.max_answer_length), join_words=False)
+                    answers_gen = self.tokenizer.batch_decode(outs, skip_special_tokens=True)
                     gts = {}
                     gens = {}
                     for i, (gts_i, gen_i) in enumerate(zip(answers_gt, answers_gen)):
@@ -349,10 +356,11 @@ class VlspEvjVqaTask(BaseTask):
                 for it, items in enumerate(self.private_test_dict_dataloader):
                     items = items.to(self.device)
                     with torch.no_grad():
-                        outs, _ = self.model.beam_search(items, batch_size=items.batch_size, beam_size=self.evaluating_beam_size, out_size=1)
+                        # outs, _ = self.model.beam_search(items, batch_size=items.batch_size, beam_size=self.evaluating_beam_size, out_size=1)
+                        outs = self.model.generate(input_ids=items.input_ids, attention_mask=items.attention_mask, max_length=self.vocab.max_answer_length, num_beams=self.evaluating_beam_size)
 
                     answers_gt = items.answers
-                    answers_gen = self.vocab.decode_answer(outs.contiguous().view(-1, self.vocab.max_answer_length), join_words=False)
+                    answers_gen = self.tokenizer.batch_decode(outs, skip_special_tokens=True)
                     gts = {}
                     gens = {}
                     for i, (gts_i, gen_i) in enumerate(zip(answers_gt, answers_gen)):

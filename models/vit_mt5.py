@@ -30,12 +30,13 @@ class ViTmT5(BaseTransformer):
         vision_features, vision_padding_mask = self.vision_embedding(images) # (3, 49, 512) (3, 1, 1, 49)
         text_features, text_padding_mask = self.text_embedding(questions) # (3, 12, 512) (3, 1, 1, 12)
 
-        encoder_features = torch.cat([vision_features, text_features], dim=1) # (3, 49 + 12, 512)
-        encoder_features = self.fusion(encoder_features)
-        # print(vision_padding_mask.shape, text_padding_mask.shape)
-        while len(text_padding_mask.shape) < len(vision_padding_mask.shape):
-            text_padding_mask = text_padding_mask.unsqueeze(1)
+        # encoder_features = torch.cat([vision_features, text_features], dim=1) # (3, 49 + 12, 512)
+        # encoder_features = self.fusion(encoder_features)
+    
+        # while len(text_padding_mask.shape) < len(vision_padding_mask.shape):
+        text_padding_mask = text_padding_mask.unsqueeze(1).unsqueeze(1)
         encoder_padding_mask = torch.cat([vision_padding_mask, text_padding_mask], dim=-1) # (3, 1, 1, 49 + 12)
+        return
 
         answer_tokens = input_features.answer_tokens
         output = self.decoder(
@@ -55,6 +56,10 @@ class ViTmT5(BaseTransformer):
 
         encoder_features = torch.cat([vision_features, text_features], dim=1) # (3, 49 + 12, 512)
         encoder_features = self.fusion(encoder_features)
+        # print(vision_padding_mask.shape, text_padding_mask.shape)
+    
+        while len(text_padding_mask.shape) < len(vision_padding_mask.shape):
+            text_padding_mask = text_padding_mask.unsqueeze(1)
         encoder_padding_mask = torch.cat([vision_padding_mask, text_padding_mask], dim=-1) # (3, 1, 1, 49 + 12)
 
         return encoder_features, encoder_padding_mask

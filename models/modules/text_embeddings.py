@@ -243,7 +243,7 @@ class LSTMTextEmbedding(nn.Module):
         self.lstm = nn.LSTM(input_size=config.D_MODEL, hidden_size=config.D_MODEL, batch_first=True)
 
     def forward(self, tokens):
-        padding_masks = generate_padding_mask(tokens, padding_idx=self.padding_idx).to(tokens.device)
+        padding_masks = generate_padding_mask(tokens, pad_token_id=self.padding_idx).to(tokens.device)
         seq_len = tokens.shape[-1]
         sequential_masks = generate_sequential_mask(seq_len).to(tokens.device)
 
@@ -588,7 +588,7 @@ class T5Embedding(nn.Module):
         self.device = config.DEVICE
         
         # Khởi tạo tokenizer
-        self.tokenizer = T5Tokenizer.from_pretrained(config.PRETRAINED_NAME)
+        self.tokenizer = T5Tokenizer.from_pretrained(config.PRETRAINED_NAME, legacy=False)
         
         # Khởi tạo mô hình T5
         self.embedding = T5EncoderModel.from_pretrained(config.PRETRAINED_NAME)
