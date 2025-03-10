@@ -17,10 +17,11 @@ class MultilingualMultiModalVocab(MultiModalVocab):
         self.max_question_length = 0
         self.max_answer_length = 0
         for json_dir in json_dirs:
-            json_data = json.load(open(json_dir))
+            json_data = json.load(open(json_dir, "r", encoding="utf-8"))
             for ann in json_data["annotations"]:
                 question = ann["question"]
-                answer = ann["answer"]
+                # answer = ann["answer"] gốc
+                answer = ann["answers"] # vivqav2
                 if is_japanese_sentence(question):
                     question = list(question)
                     answer = list(answer)

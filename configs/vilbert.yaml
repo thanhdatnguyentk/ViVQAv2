@@ -1,0 +1,114 @@
+TASK: ClassificationTask
+
+DATASET:
+  FEATURE_DATASET: 
+    TYPE: Vivqav2FeatureDataset
+    BATCH_SIZE: 64
+    WORKERS: 0
+    FEATURE_PATH:
+      FEATURES: features\vinvl_vinvl
+      SCENE_TEXT: null
+      IMAGE: data/vivqa_v2/images
+  VOCAB:
+    TYPE: VQAv2ClassificationVocab
+    TOKENIZER: null
+    MIN_FREQ: 5
+    WORD_EMBEDDING: null
+    WORD_EMBEDDING_CACHE: null
+    BOS_TOKEN: <bos>
+    EOS_TOKEN: <eos>
+    PAD_TOKEN: <pad>
+    UNK_TOKEN: <unk>
+    IMG_TOKEN: <img>
+    FEAT_TOKEN: <feat>
+    BOX_TOKEN: <box>
+    QUESTION_TOKEN: <question>
+    ANSWER_TOKEN: <answer>
+    JSON_PATH:
+      TRAIN: data/vivqa_v2/vivqa_v2_train.json
+      DEV: data/vivqa_v2/vivqa_v2_dev.json
+      TEST: data/vivqa_v2/vivqa_v2_test.json
+  JSON_PATH:
+    TRAIN: data/vivqa_v2/vivqa_v2_train.json
+    DEV: data/vivqa_v2/vivqa_v2_dev.json
+    TEST: data/vivqa_v2/vivqa_v2_test.json
+
+TRAINING:
+  CHECKPOINT_PATH: saved_models
+  LEARNING_RATE: 0.002
+  WARMUP: 10000
+  SCORE: CIDEr
+  GET_SCORES: True
+  TRAINING_BEAM_SIZE: 5
+  EVALUATING_BEAM_SIZE: 3
+  PATIENCE: 5
+  VERBOSE_SCORES:
+    - CIDEr
+    - BLEU
+    - ROUGE
+    - Accuracy
+    - F1
+    - Precision
+    - Recall
+
+MODEL:
+  ARCHITECTURE: ViLBERT
+  NAME: vilbert_region_x152++_faster_rcnn
+  DEVICE: cuda
+  D_MODEL: 512
+  VISION_EMBEDDING:
+    ARCHITECTURE: FeatureEmbedding
+    D_FEATURE: 2048
+    D_MODEL: 512
+    DROPOUT: 0.1
+  TEXT_EMBEDDING:
+    ARCHITECTURE: BertEmbedding
+    PRETRAINED_NAME: bert-base-multilingual-uncased
+    DEVICE: cuda
+    HIDDEN_SIZE: 768
+    NUM_HIDDEN_LAYERS: 12
+    NUM_ATTENTION_HEADS: 12 
+    LOAD_PRETRAINED: False
+    FREEZE_WEIGHTS: False
+    D_PRETRAINED_FEATURE: 768
+    D_MODEL: 512
+    DROPOUT: .1
+  TEXT_ENCODER:
+    ARCHITECTURE: Encoder
+    D_MODEL: 512
+    LAYERS: 3
+    SELF_ATTENTION:
+      ARCHITECTURE: ScaledDotProductAttention
+      HEAD: 8
+      D_MODEL: 512
+      D_KEY: 64
+      D_VALUE: 64
+      D_FF: 2048
+      USE_AOA: False
+      CAN_BE_STATEFUL: False
+      DROPOUT: 0.1
+  VISION_ENCODER:
+    ARCHITECTURE: Encoder
+    D_MODEL: 512
+    LAYERS: 3
+    SELF_ATTENTION:
+      ARCHITECTURE: ScaledDotProductAttention
+      HEAD: 8
+      D_MODEL: 512
+      D_KEY: 64
+      D_VALUE: 64
+      D_FF: 2048
+      USE_AOA: False
+      CAN_BE_STATEFUL: False
+      DROPOUT: 0.1
+  CO_ATTENTION:
+    ARCHITECTURE: ScaledDotProductAttention
+    HEAD: 8
+    D_VISION: 512
+    D_LANGUAGE: 512
+    D_MODEL: 512
+    D_KEY: 64
+    D_VALUE: 64
+    DROPOUT: 0.1
+    GLIMPSES: 2
+    DROPOUT: .1

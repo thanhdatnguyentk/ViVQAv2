@@ -3,6 +3,8 @@ import argparse
 from configs.utils import get_config
 from builders.task_builder import build_task
 from utils.logging_utils import setup_logger
+import os
+CUDA_LAUNCH_BLOCKING=1
 
 logger = setup_logger()
 

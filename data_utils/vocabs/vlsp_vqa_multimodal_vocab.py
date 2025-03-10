@@ -5,17 +5,17 @@ from data_utils.vocabs.multilingual_multimodal_vocab import MultilingualMultiMod
 @META_VOCAB.register()
 class VlspVqaMultiModalVocab(MultilingualMultiModalVocab):
     def __init__(self, config) -> None:
-        self.tokenizer = config.VOCAB.TOKENIZER
+        self.tokenizer = config.TOKENIZER
 
-        self.padding_token = config.VOCAB.PAD_TOKEN
-        self.bos_token = config.VOCAB.BOS_TOKEN
-        self.eos_token = config.VOCAB.EOS_TOKEN
-        self.unk_token = config.VOCAB.UNK_TOKEN
-        self.img_token = config.VOCAB.IMG_TOKEN
-        self.feat_token = config.VOCAB.FEAT_TOKEN
-        self.box_token = config.VOCAB.BOX_TOKEN
-        self.question_token = config.VOCAB.QUESTION_TOKEN
-        self.answer_token = config.VOCAB.ANSWER_TOKEN
+        self.padding_token = config.PAD_TOKEN
+        self.bos_token = config.BOS_TOKEN
+        self.eos_token = config.EOS_TOKEN
+        self.unk_token = config.UNK_TOKEN
+        self.img_token = config.IMG_TOKEN
+        self.feat_token = config.FEAT_TOKEN
+        self.box_token = config.BOX_TOKEN
+        self.question_token = config.QUESTION_TOKEN
+        self.answer_token = config.ANSWER_TOKEN
 
         self.make_vocab([
             config.JSON_PATH.TRAIN,
@@ -59,5 +59,5 @@ class VlspVqaMultiModalVocab(MultilingualMultiModalVocab):
         self.answer_idx = self.stoi[self.answer_token]
 
         self.word_embeddings = None
-        if config.VOCAB.WORD_EMBEDDING is not None:
+        if config.WORD_EMBEDDING is not None:
             self.load_word_embeddings(build_word_embedding(config))

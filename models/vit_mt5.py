@@ -61,5 +61,5 @@ class ViTmT5(BaseTransformer):
         while len(text_padding_mask.shape) < len(vision_padding_mask.shape):
             text_padding_mask = text_padding_mask.unsqueeze(1)
         encoder_padding_mask = torch.cat([vision_padding_mask, text_padding_mask], dim=-1) # (3, 1, 1, 49 + 12)
-
+        print(encoder_padding_mask)
         return encoder_features, encoder_padding_mask

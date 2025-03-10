@@ -9,3 +9,4 @@ from .ocr_classification_vocab import OcrClassificationVocab
 from .vlsp_evjvqa_vocab import VlspEvjVqaVocab
 from .vlsp_vqa_multimodal_vocab import VlspVqaMultiModalVocab
 from .vivqav2_classification_vocab import VQAv2ClassificationVocab
+from .openvilc_image_captioning_vocab import OpenViLCCaptioningVocab

@@ -28,7 +28,6 @@ class ViTmBERTGeneration(BaseTransformer):
 
     def forward(self, inputs: Instance):
         fused_features, fused_padding_mask = self.encoder_forward(inputs)
-        
         answer_tokens = inputs.answer_tokens
         out = self.decoder(
             answer_tokens=answer_tokens,

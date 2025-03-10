@@ -46,6 +46,7 @@ class ScaledDotProductAttention(nn.Module):
     def forward(self, queries, keys, values, attention_mask=None, **kwargs):
         b_s, nq = queries.shape[:2]
         nk = keys.shape[1]
+
         q = self.fc_q(queries).view(b_s, nq, self.h, self.d_k).permute(0, 2, 1, 3)  # (b_s, h, nq, d_k)
         k = self.fc_k(keys).view(b_s, nk, self.h, self.d_k).permute(0, 2, 3, 1)  # (b_s, h, d_k, nk)
         v = self.fc_v(values).view(b_s, nk, self.h, self.d_v).permute(0, 2, 1, 3)  # (b_s, h, nk, d_v)

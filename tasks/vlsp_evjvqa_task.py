@@ -150,9 +150,8 @@ class VlspEvjVqaTask(BaseTask):
             for it, items in enumerate(dataloader):
                 items = items.to(self.device)
                 with torch.no_grad():
-                    # outs, _ = self.model.beam_search(items, batch_size=items.batch_size, beam_size=self.evaluating_beam_size, out_size=1)
-                    outs = self.model.generate(input_ids=items.input_ids, attention_mask=items.attention_mask, max_length=self.vocab.max_answer_length, num_beams=self.evaluating_beam_size)
-
+                    outs, _ = self.model.beam_search(items, batch_size=items.batch_size, beam_size=self.evaluating_beam_size, out_size=1)
+                    
                 answers_gt = items.answers
                 answers_gen = self.tokenizer.batch_decode(outs, skip_special_tokens=True)
                 for i, (gts_i, gen_i) in enumerate(zip(answers_gt, answers_gen)):

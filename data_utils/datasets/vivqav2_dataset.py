@@ -119,6 +119,7 @@ class Vivqav2FeatureDataset(BaseDataset):
             question_id=item["question_id"],
             image_id=image_id,
             filename=file_name,
+            question=item["question"],
             question_tokens=question,
             answer=answer,
             **features
