@@ -48,6 +48,7 @@ def get_tokenizer(tokenizer):
             print("Please install VnCoreNLP package. "
                   "See the docs at https://github.com/vncorenlp/VnCoreNLP for more information.")
             raise
+    return tokenize
 
 def preprocess_sentence(sentence: str, tokenizer: str):
     sentence = sentence.lower()

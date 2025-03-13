@@ -66,17 +66,18 @@ class Vocab(object):
         self.max_question_length = 0
         self.max_answer_length = 0
         for json_dir in json_dirs:
-            json_data = json.load(open(json_dir))
+            json_data = json.load(open(json_dir, encoding="utf-8"))
             for ann in json_data["annotations"]:
-                for answer in ann["answers"]:
-                    question = preprocess_sentence(ann["question"], self.tokenizer)
-                    answer = preprocess_sentence(answer, self.tokenizer)
-                    self.freqs.update(question)
-                    self.freqs.update(answer)
-                    if len(question) + 2 > self.max_question_length:
-                            self.max_question_length = len(question) + 2
-                    if len(answer) + 2 > self.max_answer_length:
-                        self.max_answer_length = len(answer) + 2
+                question = preprocess_sentence(ann["question"], self.tokenizer)
+                answer = preprocess_sentence(ann["answers"], self.tokenizer)
+                self.freqs.update(question)
+                self.freqs.update(answer)
+                if len(question) + 2 > self.max_question_length:
+                        self.max_question_length = len(question) + 2
+                if len(answer) + 2 > self.max_answer_length:
+                    self.max_answer_length = len(answer) + 2
+        print(f"Max question length: {self.max_question_length}")
+        print(f"Max answer length: {self.max_answer_length}")
 
     def encode_question(self, question: List[str]) -> torch.Tensor:
         """ Turn a question into a vector of indices and a question length """

@@ -21,11 +21,11 @@ class DictionaryDataset(BaseDataset):
                     answers = [" ".join(answer) for answer in answers]
                     annotation = {
                         "question_id": ann["id"],
-                        "type": ann["QA-type"],
+                        # "type": ann["QA-type"],
                         "question": question,
                         "answers": answers,
                         "image_id": ann["image_id"],
-                        "filename": image["filename"]
+                        "filename": image["file_name"]
                     }
                     break
 
@@ -37,14 +37,16 @@ class DictionaryDataset(BaseDataset):
         item = self.annotations[idx]
         image_id = item["image_id"]
         filename = item["filename"]
-        features = self.load_features(image_id)
+        filename = filename.split(".")[0]
+        filename = int(filename)
+        features = self.load_features(filename)
         question = item["question"]
         question_tokens = self.vocab.encode_question(question)
         answers = item["answers"]
 
         return Instance(
             question_id=item["question_id"],
-            type=item["type"],
+            # type=item["type"],
             image_id=image_id,
             filename=filename,
             question=question,

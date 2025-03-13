@@ -78,7 +78,7 @@ class Vivqav2FeatureDataset(BaseDataset):
     
     @property
     def answers(self):
-        return [ann["answers"] for ann in self.annotations]
+        return [ann["answer"] for ann in self.annotations]
     
     def load_annotations(self, json_data):
         annotations = []
@@ -115,6 +115,8 @@ class Vivqav2FeatureDataset(BaseDataset):
         question = self.vocab.encode_question(question)
         answer = preprocess_sentence(item["answer"], self.vocab.tokenizer)
         answer = self.vocab.encode_answer(answer)
+        shifted_right_answer = torch.zeros_like(answer).fill_(self.vocab.padding_idx)
+        shifted_right_answer[:-1] = answer[1:]
         return Instance(
             question_id=item["question_id"],
             image_id=image_id,
@@ -122,6 +124,8 @@ class Vivqav2FeatureDataset(BaseDataset):
             question=item["question"],
             question_tokens=question,
             answer=answer,
+            answer_tokens=answer,
+            shifted_right_answer_tokens=shifted_right_answer,
             **features
         )
     

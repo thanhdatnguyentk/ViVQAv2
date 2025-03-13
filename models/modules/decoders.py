@@ -72,7 +72,7 @@ class Decoder(Module):
                         enc_attention_mask=encoder_attention_mask)
 
         out = self.fc(out)
-
+    
         return F.log_softmax(out, dim=-1)
 
 @META_DECODER.register()

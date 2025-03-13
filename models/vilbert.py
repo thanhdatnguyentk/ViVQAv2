@@ -45,6 +45,7 @@ class ViLBERT(nn.Module):
         super().__init__()
         
         self.device = torch.device(config.DEVICE)
+        self.vocab = vocab
         
         self.text_embedding = build_text_embedding(config.TEXT_EMBEDDING, vocab)
         self.vision_embedding = build_vision_embedding(config.VISION_EMBEDDING)
@@ -86,6 +87,8 @@ class ViLBERT(nn.Module):
         return weighted_mean.view(n, -1)
 
     def forward(self, input_features: Instance):
+
+        
         
         # Xử lý hình ảnh
         vision_features = input_features.region_features
@@ -97,7 +100,6 @@ class ViLBERT(nn.Module):
         text_features = self.text_encoder(features=text_features, padding_mask=text_padding_mask)
     
         # Co-Attention
-        # attended_vision_features = self.co_attention(vision_features, text_features)
         
         vision_features = vision_features / (vision_features.norm(p=2, dim=1, keepdim=True).expand_as(vision_features) + 1e-8)
         a = self.co_attention(vision_features, text_features)

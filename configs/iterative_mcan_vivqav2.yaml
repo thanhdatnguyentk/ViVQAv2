@@ -6,12 +6,12 @@ DATASET:
     BATCH_SIZE: 64
     WORKERS: 0
     FEATURE_PATH:
-      FEATURES: features/vinvl_vinvl
+      FEATURES: features\vinvl_vinvl
       SCENE_TEXT: null
       IMAGE: data/vivqa_v2/images
     SCENE_TEXT_THRESHOLD: 0.3
   DICT_DATASET:
-    TYPE: Vivqav2FeatureDataset
+    TYPE: DictionaryDataset
     BATCH_SIZE: 64
     WORKERS: 0  
     FEATURE_PATH:
@@ -21,7 +21,7 @@ DATASET:
     SCENE_TEXT_THRESHOLD: 0.3
   SCENE_TEXT_THRESHOLD: 0.3
   VOCAB:
-    TYPE: VQAv2ClassificationVocab
+    TYPE: Vocab
     TOKENIZER: null
     MIN_FREQ: 1
     WORD_EMBEDDING: null
@@ -47,7 +47,7 @@ DATASET:
 TRAINING:
   CHECKPOINT_PATH: saved_models
   LEARNING_RATE: 1.
-  RL_LEARNING_RATE: 0.000005
+  RL_LEARNING_RATE: 0.00005
   WARMUP: 10000
   SCORE: CIDEr
   GET_SCORES: True

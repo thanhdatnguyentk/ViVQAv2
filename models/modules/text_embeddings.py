@@ -295,7 +295,9 @@ class TextBert(BertPreTrainedModel):
         self.init_weights()
 
     def forward(self, txt_inds, txt_mask):
-        txt_inds = torch.clamp(txt_inds, min=0, max=30521)  # Giới hạn trong phạm vi hợp lệ
+        print("Max idx: ", txt_inds.max())
+        print("Min idx: ", txt_inds.min())
+        # txt_inds = torch.clamp(txt_inds, min=0, max=30521)  # Giới hạn trong phạm vi hợp lệ
         encoder_inputs = self.embeddings(txt_inds)
         
         attention_mask = txt_mask

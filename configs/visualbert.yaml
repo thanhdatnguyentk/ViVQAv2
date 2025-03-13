@@ -1,4 +1,4 @@
-TASK: OpenEndedTask
+TASK: ClassificationTask
 
 DATASET:
   FEATURE_DATASET: 
@@ -53,15 +53,17 @@ TRAINING:
     - Recall
 
 MODEL:
-  ARCHITECTURE: ViLBERT
-  NAME: vilbert_2_region_x152++_faster_rcnn
+  ARCHITECTURE: VisualBERT
+  NAME: visualbert_x152_faster_rcnn
   DEVICE: cuda
   D_MODEL: 512
+
   VISION_EMBEDDING:
     ARCHITECTURE: FeatureEmbedding
     D_FEATURE: 2048
     D_MODEL: 512
     DROPOUT: 0.1
+
   TEXT_EMBEDDING:
     ARCHITECTURE: BertEmbedding
     PRETRAINED_NAME: bert-base-multilingual-uncased
@@ -74,7 +76,8 @@ MODEL:
     D_PRETRAINED_FEATURE: 768
     D_MODEL: 512
     DROPOUT: .1
-  TEXT_ENCODER:
+
+  UNIFIED_ENCODER:
     ARCHITECTURE: Encoder
     D_MODEL: 512
     LAYERS: 3
@@ -85,31 +88,7 @@ MODEL:
       D_KEY: 64
       D_VALUE: 64
       D_FF: 2048
+      DROPOUT: 0.1
       USE_AOA: False
       CAN_BE_STATEFUL: False
-      DROPOUT: 0.1
-  VISION_ENCODER:
-    ARCHITECTURE: Encoder
-    D_MODEL: 512
-    LAYERS: 3
-    SELF_ATTENTION:
-      ARCHITECTURE: ScaledDotProductAttention
-      HEAD: 8
-      D_MODEL: 512
-      D_KEY: 64
-      D_VALUE: 64
-      D_FF: 2048
-      USE_AOA: False
-      CAN_BE_STATEFUL: False
-      DROPOUT: 0.1
-  CO_ATTENTION:
-    ARCHITECTURE: ScaledDotProductAttention
-    HEAD: 8
-    D_VISION: 512
-    D_LANGUAGE: 512
-    D_MODEL: 512
-    D_KEY: 64
-    D_VALUE: 64
-    DROPOUT: 0.1
-    GLIMPSES: 2
-    DROPOUT: .1
+
