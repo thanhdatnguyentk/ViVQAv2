@@ -1,4 +1,5 @@
-TASK: ClassificationTask
+TASK: OpenEndedTask
+
 DATASET:
   FEATURE_DATASET:
     TYPE: Vivqav2FeatureDataset
@@ -8,8 +9,19 @@ DATASET:
       FEATURES: features\vinvl_vinvl
       SCENE_TEXT: null
       IMAGE: data/vivqa_v2/images
+    SCENE_TEXT_THRESHOLD: 0.3
+  DICT_DATASET:
+    TYPE: DictionaryDataset
+    BATCH_SIZE: 64
+    WORKERS: 0  
+    FEATURE_PATH:
+      FEATURES: features\vinvl_vinvl
+      SCENE_TEXT: null
+      IMAGE: data/vivqa_v2/images
+    SCENE_TEXT_THRESHOLD: 0.3
+  SCENE_TEXT_THRESHOLD: 0.3
   VOCAB:
-    TYPE: VQAv2ClassificationVocab
+    TYPE: Vocab
     TOKENIZER: null
     MIN_FREQ: 1
     WORD_EMBEDDING: null
@@ -28,13 +40,14 @@ DATASET:
       DEV: data/vivqa_v2/vivqa_v2_dev.json
       TEST: data/vivqa_v2/vivqa_v2_test.json
   JSON_PATH:
-    TRAIN: data/vivqa_v2/vivqa_v2_train.json
-    DEV: data/vivqa_v2/vivqa_v2_dev.json
-    TEST: data/vivqa_v2/vivqa_v2_test.json
+      TRAIN: data/vivqa_v2/vivqa_v2_train.json
+      DEV: data/vivqa_v2/vivqa_v2_dev.json
+      TEST: data/vivqa_v2/vivqa_v2_test.json
 
 TRAINING:
   CHECKPOINT_PATH: saved_models
-  LEARNING_RATE: 0.002
+  LEARNING_RATE: 1.
+  RL_LEARNING_RATE: 0.00005
   WARMUP: 10000
   SCORE: CIDEr
   GET_SCORES: True
@@ -51,8 +64,8 @@ TRAINING:
     - Recall
 
 MODEL:
-  ARCHITECTURE: HierarchicalCoAttention
-  NAME: hierarchical_co_attention
+  ARCHITECTURE: IterativeHierarchicalCoAttention
+  NAME: iterative_hierarchical_co_attention
   DEVICE: cuda
   D_MODEL: 512
   VISION_EMBEDDING:
@@ -130,3 +143,38 @@ MODEL:
   TEXT_ATTR_REDUCE:
     D_MODEL: 512
     DROPOUT: 0.1
+  DECODER:
+    ARCHITECTURE: Decoder
+    D_MODEL: 512
+    LAYERS: 3
+    ATTENTION:
+      SELF_ATTENTION:
+        ARCHITECTURE: ScaledDotProductAttention
+        HEAD: 8
+        D_MODEL: 512
+        D_KEY: 64
+        D_VALUE: 64
+        D_FF: 2048
+        D_FEATURE: 2048
+        USE_AOA: False
+        CAN_BE_STATEFUL: True
+        DROPOUT: .1
+      ENC_ATTENTION:
+        ARCHITECTURE: ScaledDotProductAttention
+        HEAD: 8
+        D_MODEL: 512
+        D_KEY: 64
+        D_VALUE: 64
+        D_FF: 2048
+        D_FEATURE: 2048
+        USE_AOA: False
+        CAN_BE_STATEFUL: False
+        DROPOUT: .1
+    TEXT_EMBEDDING:
+      ARCHITECTURE: UsualEmbedding
+      D_MODEL: 512
+      D_EMBEDDING: 300
+      WORD_EMBEDDING: null
+      WORD_EMBEDDING_CACHE: null
+      DROPOUT: 0.1
+

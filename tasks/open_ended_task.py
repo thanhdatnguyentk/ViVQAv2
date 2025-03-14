@@ -137,10 +137,13 @@ class OpenEndedTask(BaseTask):
 
                 answers_gt = items.answers
                 answers_gen = self.vocab.decode_answer(outs.contiguous().view(-1, self.vocab.max_answer_length), join_words=False)
+
                 for i, (gts_i, gen_i) in enumerate(zip(answers_gt, answers_gen)):
                     gen_i = ' '.join([k for k, g in itertools.groupby(gen_i)])
+                    gts_i = ' '.join([k for k, g in itertools.groupby(gts_i)])
                     gens['%d_%d' % (it, i)] = [gen_i, ]
-                    gts['%d_%d' % (it, i)] = gts_i
+                    gts['%d_%d' % (it, i)] = [gts_i, ]
+
                 pbar.update()
 
         scores, _ = evaluation.compute_scores(gts, gens)
@@ -296,17 +299,17 @@ class OpenEndedTask(BaseTask):
                 items = items.to(self.device)
                 with torch.no_grad():
                     outs, _ = self.model.beam_search(items, batch_size=items.batch_size, beam_size=self.evaluating_beam_size, out_size=1)
-
                 answers_gt = items.answers
                 answers_gen = self.vocab.decode_answer(outs.contiguous().view(-1, self.vocab.max_answer_length), join_words=False)
                 gts = {}
                 gens = {}
                 for i, (gts_i, gen_i) in enumerate(zip(answers_gt, answers_gen)):
                     gen_i = ' '.join([k for k, g in itertools.groupby(gen_i)])
+                    gts_i = ' '.join([k for k, g in itertools.groupby(gts_i)])
                     gens['%d_%d' % (it, i)] = gen_i
                     gts['%d_%d' % (it, i)] = gts_i
                     overall_gens['%d_%d' % (it, i)] = [gen_i, ]
-                    overall_gts['%d_%d' % (it, i)] = gts_i
+                    overall_gts['%d_%d' % (it, i)] = [gts_i, ]
                 pbar.update()
 
                 results.append({
@@ -325,4 +328,4 @@ class OpenEndedTask(BaseTask):
         json.dump({
             "results": results,
             **scores,
-        }, open(os.path.join(self.checkpoint_path, "test_results.json"), "w+"), ensure_ascii=False)
+        }, open(os.path.join(self.checkpoint_path, "test_results.json"), "w+",encoding="utf-8"), ensure_ascii=False)

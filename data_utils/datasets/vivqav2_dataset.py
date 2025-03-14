@@ -123,7 +123,7 @@ class Vivqav2FeatureDataset(BaseDataset):
             filename=file_name,
             question=item["question"],
             question_tokens=question,
-            answer=answer,
+            answer=item["answer"],
             answer_tokens=answer,
             shifted_right_answer_tokens=shifted_right_answer,
             **features
@@ -131,3 +131,5 @@ class Vivqav2FeatureDataset(BaseDataset):
     
     def __len__(self) -> int:
         return len(self.annotations)
+    
+    

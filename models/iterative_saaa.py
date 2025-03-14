@@ -114,7 +114,7 @@ class IterativeSAAA(BaseTransformer):
         combined = torch.cat([v, q], dim=1)
         combined_mask = torch.cat([v_padding_mask, q_padding_mask], dim=-1)
         combined = self.fusion(combined)
-        combined = combined.masked_fill(combined_mask.squeeze(1).squeeze(1).unsqueeze(-1), value=0)
+        combined = combined.masked_fill(combined_mask.squeeze(1).squeeze(1).unsqueeze(-1).bool(), value=0)
         combined = self.norm(combined)
 
         return combined, combined_mask
@@ -130,3 +130,4 @@ class IterativeSAAA(BaseTransformer):
         )
 
         return F.log_softmax(out, dim=-1)
+    

@@ -17,8 +17,9 @@ class DictionaryDataset(BaseDataset):
             for image in json_data["images"]:
                 if image["id"] == ann["image_id"]:
                     question = preprocess_sentence(ann["question"], self.vocab.tokenizer)
-                    answers = [preprocess_sentence(answer, self.vocab.tokenizer) for answer in ann["answers"]]
-                    answers = [" ".join(answer) for answer in answers]
+                    # answers = [preprocess_sentence(answer, self.vocab.tokenizer) for answer in ann["answers"]]
+                    # answers = [" ".join(answer) for answer in answers]
+                    answers = preprocess_sentence(ann["answers"], self.vocab.tokenizer)
                     annotation = {
                         "question_id": ann["id"],
                         # "type": ann["QA-type"],
@@ -43,6 +44,7 @@ class DictionaryDataset(BaseDataset):
         question = item["question"]
         question_tokens = self.vocab.encode_question(question)
         answers = item["answers"]
+        answers_tokens = self.vocab.encode_answer(answers)
 
         return Instance(
             question_id=item["question_id"],
@@ -52,5 +54,6 @@ class DictionaryDataset(BaseDataset):
             question=question,
             question_tokens=question_tokens,
             answers=answers,
+            answers_tokens = answers_tokens,
             **features
         )

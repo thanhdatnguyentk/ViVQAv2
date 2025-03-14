@@ -24,3 +24,4 @@ from .vit_mbert_generation import ViTmBERTGeneration
 from .vilbert import ViLBERT
 from .mcan_image_captioning import MCANCaptioning
 from .visualbert import VisualBERT
+from .interative_hierarchical_co_attention import IterativeHierarchicalCoAttention
