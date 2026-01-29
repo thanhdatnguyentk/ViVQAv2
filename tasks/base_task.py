@@ -73,7 +73,8 @@ class BaseTask:
     def lambda_lr(self, step):
         warm_up = self.warmup
         step += 1
-        return (self.model.d_model ** -.5) * min(step ** -.5, step * warm_up ** -1.5)
+        # Removed d_model factor for more standard warmup schedule
+        return min(step ** -.5, step * warm_up ** -1.5)
 
     def load_checkpoint(self, fname) -> dict:
         if not os.path.exists(fname):
@@ -81,7 +82,7 @@ class BaseTask:
 
         logger.info("Loading checkpoint from %s", fname)
 
-        checkpoint = torch.load(fname)
+        checkpoint = torch.load(fname, weights_only=False)
 
         torch.set_rng_state(checkpoint['torch_rng_state'])
         torch.cuda.set_rng_state(checkpoint['cuda_rng_state'])

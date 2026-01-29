@@ -25,6 +25,9 @@ class ScaledDotProductAttention(nn.Module):
         self.fc_k = nn.Linear(d_model, h * d_k)
         self.fc_v = nn.Linear(d_model, h * d_v)
         self.fc_o = nn.Linear(h * d_v, d_model)
+        
+        # Phrasal Lexeme: Bilinear Layer
+        self.phrasal_linear = nn.Linear(d_model, d_model)
 
         self.d_model = d_model
         self.d_k = d_k
@@ -38,10 +41,12 @@ class ScaledDotProductAttention(nn.Module):
         nn.init.xavier_uniform_(self.fc_k.weight)
         nn.init.xavier_uniform_(self.fc_v.weight)
         nn.init.xavier_uniform_(self.fc_o.weight)
+        nn.init.xavier_uniform_(self.phrasal_linear.weight) # Init phrasal weights
         nn.init.constant_(self.fc_q.bias, 0)
         nn.init.constant_(self.fc_k.bias, 0)
         nn.init.constant_(self.fc_v.bias, 0)
         nn.init.constant_(self.fc_o.bias, 0)
+        nn.init.constant_(self.phrasal_linear.bias, 0)
 
     def forward(self, queries, keys, values, attention_mask=None, **kwargs):
         b_s, nq = queries.shape[:2]
@@ -52,8 +57,37 @@ class ScaledDotProductAttention(nn.Module):
         v = self.fc_v(values).view(b_s, nk, self.h, self.d_v).permute(0, 2, 1, 3)  # (b_s, h, nk, d_v)
 
         att = torch.matmul(q, k) / np.sqrt(self.d_k)  # (b_s, h, nq, nk)
+
+        # Phrasal Score Calculation
+        # P = Sigmoid(Bilinear(h_i, h_j))
+        # Use queries and keys as h_i and h_j
+        # We compute (queries @ W) @ keys.T
+        phrasal_q = self.phrasal_linear(queries) # (b_s, nq, d_model)
+        phrasal_score = torch.matmul(phrasal_q, keys.transpose(-2, -1)) # (b_s, nq, nk)
+        phrasal_score = torch.sigmoid(phrasal_score)
+        
+        # Add Phrasal Score to Attention matrix
+        # Broadcast over heads: (b_s, 1, nq, nk)
+        att += phrasal_score.unsqueeze(1)
+
         if attention_mask is not None:
-            att += attention_mask
+            # 1. Đảm bảo mask luôn là 4D (b_s, 1, nq, nk)
+            if attention_mask.dim() == 3:
+                attention_mask = attention_mask.unsqueeze(1)
+            
+            # 2. Xử lý trường hợp Beam Search (khi b_s của att đã bị nhân lên)
+            if att.shape[0] != attention_mask.shape[0]:
+                beam_size = att.shape[0] // attention_mask.shape[0]
+                attention_mask = attention_mask.unsqueeze(1).repeat(1, beam_size, 1, 1, 1)
+                attention_mask = attention_mask.view(att.shape[0], *attention_mask.shape[2:])
+            
+            att += attention_mask   
+            # try:
+            #     att += attention_mask
+            # except:
+            #     print(f"DEBUG: att shape: {att.shape}, mask shape: {attention_mask.shape}")
+            #     raise ValueError("attention_mask shape is not compatible with att shape")
+
         att = torch.softmax(att, dim=-1)
         out = torch.matmul(att, v).permute(0, 2, 1, 3).contiguous().view(b_s, nq, self.h * self.d_v)  # (b_s, nq, h*d_v)
         out = self.fc_o(out)  # (b_s, nq, d_model)
@@ -127,7 +161,7 @@ class AugmentedGeometryScaledDotProductAttention(nn.Module):
 
         a = torch.matmul(q, k) / np.sqrt(self.d_k)  # (b_s, h, nq, nk)
         if attention_mask is not None:
-            att += attention_mask
+            a += attention_mask
 
         g = relative_geometry_weights
         mn = torch.log(torch.clamp(g, min = 1e-6)) + a

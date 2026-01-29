@@ -17,10 +17,10 @@ config = get_config(args.config_file)
 
 task = build_task(config)
 
-# task.start()
+task.start()
 task.get_predictions()
 logger.info("Task done.")
 
-# #shutdown pc
+#shutdown pc
 # import os
-# os.system("shutdown /s /t 1")
+# os.system("shutdown /s /h")

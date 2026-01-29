@@ -1,0 +1,72 @@
+================================================================================
+BÁO CÁO PHÂN TÍCH ĐỘ CHÍNH XÁC THEO ĐỐI TƯỢNG
+================================================================================
+
+1. THỐNG KÊ TỔNG QUAN
+--------------------------------------------------------------------------------
+Tổng số loại đối tượng được phát hiện: 73
+Tổng số ảnh được phân tích: 164
+Độ chính xác trung bình trên các ảnh: 26.22%
+Độ chính xác trung vị: 0.00%
+Độ lệch chuẩn: 44.12%
+
+2. TOP 10 ĐỐI TƯỢNG CÓ ĐỘ CHÍNH XÁC CAO NHẤT
+--------------------------------------------------------------------------------
+ô tô                 | Độ chính xác:  38.89% | Câu hỏi:   18 | Ảnh:   18
+bát                  | Độ chính xác:  37.50% | Câu hỏi:   16 | Ảnh:   16
+xe tải               | Độ chính xác:  35.71% | Câu hỏi:   14 | Ảnh:   14
+đèn giao thông       | Độ chính xác:  33.33% | Câu hỏi:   12 | Ảnh:   12
+cốc                  | Độ chính xác:  31.25% | Câu hỏi:   16 | Ảnh:   16
+bồn rửa              | Độ chính xác:  30.00% | Câu hỏi:   10 | Ảnh:   10
+người                | Độ chính xác:  26.60% | Câu hỏi:   94 | Ảnh:   94
+bàn ăn               | Độ chính xác:  25.00% | Câu hỏi:   20 | Ảnh:   20
+ghế                  | Độ chính xác:  20.00% | Câu hỏi:   25 | Ảnh:   25
+đồng hồ              | Độ chính xác:  20.00% | Câu hỏi:   10 | Ảnh:   10
+
+3. TOP 10 ĐỐI TƯỢNG XUẤT HIỆN NHIỀU NHẤT
+--------------------------------------------------------------------------------
+người                | Số câu hỏi:   94 | Độ chính xác:  26.60% | Ảnh:   94
+ghế                  | Số câu hỏi:   25 | Độ chính xác:  20.00% | Ảnh:   25
+bàn ăn               | Số câu hỏi:   20 | Độ chính xác:  25.00% | Ảnh:   20
+ô tô                 | Số câu hỏi:   18 | Độ chính xác:  38.89% | Ảnh:   18
+chai                 | Số câu hỏi:   17 | Độ chính xác:  17.65% | Ảnh:   17
+bát                  | Số câu hỏi:   16 | Độ chính xác:  37.50% | Ảnh:   16
+cốc                  | Số câu hỏi:   16 | Độ chính xác:  31.25% | Ảnh:   16
+xe tải               | Số câu hỏi:   14 | Độ chính xác:  35.71% | Ảnh:   14
+tv                   | Số câu hỏi:   14 | Độ chính xác:  14.29% | Ảnh:   14
+sách                 | Số câu hỏi:   13 | Độ chính xác:   7.69% | Ảnh:   13
+
+4. PHÂN BỐ ĐỘ CHÍNH XÁC THEO KHOẢNG
+--------------------------------------------------------------------------------
+  0% -  20%:   121 ảnh (73.78%)
+ 20% -  40%:     0 ảnh ( 0.00%)
+ 40% -  60%:     0 ảnh ( 0.00%)
+ 60% -  80%:     0 ảnh ( 0.00%)
+ 80% - 100%:     0 ảnh ( 0.00%)
+      100%:    43 ảnh (26.22%)
+
+5. TOP 5 ẢNH CÓ ĐỘ CHÍNH XÁC CAO NHẤT
+--------------------------------------------------------------------------------
+Image 442980: 100.0% (1 câu hỏi)
+  Đối tượng: ngựa vằn
+Image 481214: 100.0% (1 câu hỏi)
+  Đối tượng: cà vạt, người
+Image 559073: 100.0% (1 câu hỏi)
+  Đối tượng: mèo, vali
+Image 347962: 100.0% (1 câu hỏi)
+  Đối tượng: chai, xe máy, người, túi xách
+Image 67749: 100.0% (1 câu hỏi)
+  Đối tượng: xe tải, người, chậu cây, ô tô, đèn giao thông
+
+6. TOP 5 ẢNH CÓ ĐỘ CHÍNH XÁC THẤP NHẤT
+--------------------------------------------------------------------------------
+Image 368879: 0.0% (1 câu hỏi)
+  Đối tượng: ghế, chai, người, bánh pizza, cốc
+Image 335093: 0.0% (1 câu hỏi)
+  Đối tượng: ghế, điều khiển, chậu cây, máy tính xách tay, sách
+Image 429386: 0.0% (1 câu hỏi)
+  Đối tượng: ô tô
+Image 499957: 0.0% (1 câu hỏi)
+  Đối tượng: cốc, sách, bàn ăn, kéo
+Image 295199: 0.0% (1 câu hỏi)
+  Đối tượng: nhà vệ sinh

@@ -41,14 +41,14 @@ class HierarchicalFeaturesExtractor(nn.Module):
         for conv in self.convs:
             ngrams_features.append(conv(features.permute((0, -1, 1))).permute((0, -1, 1)))
         
-        features_len = features.shape[-1]
+        features_len = features.shape[1]
         unigram_features = ngrams_features[0]
         # for each token in the unigram
         for ith in range(features_len):
             # for each n-gram, we ignore the unigram
             for ngram in range(1, max(self.ngrams)):
                 # summing all possible n-gram tokens into the unigram
-                for prev_ith in range(max(0, ith-ngram+1), min(ith+1, ngrams_features[ngram].shape[1])):
+                for prev_ith in range(max(0, ith-ngram), min(ith+1, ngrams_features[ngram].shape[1])):
                     unigram_features[:, ith] += ngrams_features[ngram][:, prev_ith]
 
         return unigram_features

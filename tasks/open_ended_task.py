@@ -167,7 +167,8 @@ class OpenEndedTask(BaseTask):
                 this_loss = loss.item()
                 running_loss += this_loss
 
-                pbar.set_postfix(loss=running_loss / (it + 1))
+                current_lr = self.optim.param_groups[0]['lr']
+                pbar.set_postfix(loss=running_loss / (it + 1), lr=f"{current_lr:.6f}")
                 pbar.update()
                 self.scheduler.step()
 
@@ -248,6 +249,7 @@ class OpenEndedTask(BaseTask):
             else:
                 patience += 1
 
+            print("Patience: ", patience)
             # switch_to_rl = False
             exit_train = False
 

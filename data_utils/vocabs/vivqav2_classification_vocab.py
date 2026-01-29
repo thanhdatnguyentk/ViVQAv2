@@ -14,12 +14,14 @@ class VQAv2ClassificationVocab(Vocab):
     # For more information, please visit https://arxiv.org/abs/1708.02711
 
     def __init__(self, config):
+        self.max_question_length = 0
         self.max_answer_length = 0
         super(VQAv2ClassificationVocab, self).__init__(config)
 
     def make_vocab(self, json_dirs):
         self.freqs = Counter()
         itoa = set()
+        self.max_question_length = 0
         for json_dir in json_dirs:
             json_data = json.load(open(json_dir,encoding="utf8"))
             for ann in json_data["annotations"]:

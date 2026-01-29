@@ -1,0 +1,40 @@
+VQA ANALYSIS REPORT
+Generated on: 2026-01-07 22:13:26.248670
+==============================
+
+Total Samples: 1050
+Overall Accuracy: 0.2438 (24.38%)
+
+ACCURACY BY ANSWER CATEGORY:
+                  mean  count
+ans_category                 
+Number        0.256410    117
+Other         0.033663    505
+Yes/No        0.488318    428
+
+ACCURACY BY QUESTION TYPE:
+            mean  count
+q_type                 
+Yes/No  0.490964    332
+Count   0.289855    138
+Other   0.220000    150
+Who     0.135135     37
+Color   0.075949     79
+What    0.035019    257
+When    0.000000      1
+How     0.000000      5
+Where   0.000000     33
+Why     0.000000     14
+
+TOP 10 COMMON ERRORS (Pred -> GT):
+gens         gts       
+có           không         118
+không        có             87
+1            2              17
+             3              13
+đỏ           trắng           7
+1            4               7
+xanh lá cây  đỏ              6
+1            0               6
+đỏ           màu đen         5
+             xanh dương      5

@@ -1,0 +1,189 @@
+================================================================================
+BÁO CÁO PHÂN TÍCH ĐỘ CHÍNH XÁC CỦA MODEL THEO ĐỐI TƯỢNG
+Model: Iterative Hierarchical Co-Attention
+Dataset: DS102 New Data
+================================================================================
+
+I. TỔNG QUAN KẾT QUẢ
+================================================================================
+
+1. Thống kê chung:
+   - Tổng số loại đối tượng được phát hiện: 73 loại
+   - Tổng số ảnh được phân tích: 164 ảnh
+   - Tổng số câu hỏi được đánh giá: 1,050 câu hỏi
+   - Độ chính xác trung bình trên các ảnh: 26.22%
+   - Độ chính xác trung vị: 0.00%
+   - Độ lệch chuẩn: 44.12%
+
+2. Phân bố độ chính xác:
+   - 0% - 20%:   121 ảnh (73.78%) - Phần lớn ảnh có độ chính xác rất thấp
+   - 20% - 40%:    0 ảnh (0.00%)
+   - 40% - 60%:    0 ảnh (0.00%)
+   - 60% - 80%:    0 ảnh (0.00%)
+   - 80% - 100%:   0 ảnh (0.00%)
+   - 100%:        43 ảnh (26.22%) - Một phần ảnh đạt độ chính xác hoàn hảo
+
+3. Nhận xét:
+   - Phân bố độ chính xác có tính lưỡng cực (bimodal): hoặc rất thấp (0-20%) 
+     hoặc hoàn hảo (100%)
+   - Độ lệch chuẩn cao (44.12%) cho thấy sự biến động lớn trong hiệu suất
+   - Độ chính xác trung vị là 0% cho thấy hơn một nửa số ảnh có độ chính xác 
+     rất thấp
+
+
+II. PHÂN TÍCH THEO ĐỐI TƯỢNG
+================================================================================
+
+A. TOP 15 ĐỐI TƯỢNG XUẤT HIỆN NHIỀU NHẤT
+
+┌────────────────────┬────────────┬──────────┬──────────────┬──────────┐
+│ Đối tượng          │ Số câu hỏi │ Số đúng  │ Độ chính xác │ Số ảnh   │
+├────────────────────┼────────────┼──────────┼──────────────┼──────────┤
+│ người              │     94     │    25    │    26.60%    │    94    │
+│ ghế                │     25     │     5    │    20.00%    │    25    │
+│ bàn ăn             │     20     │     5    │    25.00%    │    20    │
+│ ô tô               │     18     │     7    │    38.89%    │    18    │
+│ chai               │     17     │     3    │    17.65%    │    17    │
+│ cốc                │     16     │     5    │    31.25%    │    16    │
+│ bát                │     16     │     6    │    37.50%    │    16    │
+│ tv                 │     14     │     2    │    14.29%    │    14    │
+│ xe tải             │     14     │     5    │    35.71%    │    14    │
+│ sách               │     13     │     1    │     7.69%    │    13    │
+│ đèn giao thông     │     12     │     4    │    33.33%    │    12    │
+│ túi xách           │     10     │     2    │    20.00%    │    10    │
+│ đồng hồ            │     10     │     2    │    20.00%    │    10    │
+│ bồn rửa            │     10     │     3    │    30.00%    │    10    │
+│ ba lô              │     10     │     1    │    10.00%    │    10    │
+└────────────────────┴────────────┴──────────┴──────────────┴──────────┘
+
+Nhận xét:
+- "Người" là đối tượng xuất hiện nhiều nhất (94 câu hỏi, 94 ảnh)
+- Các đối tượng trong nhà (ghế, bàn ăn, cốc, bát) xuất hiện thường xuyên
+- Các phương tiện giao thông (ô tô, xe tải) cũng phổ biến
+
+
+B. TOP 10 ĐỐI TƯỢNG CÓ ĐỘ CHÍNH XÁC CAO NHẤT
+
+┌────────────────────┬──────────────┬────────────┬──────────┐
+│ Đối tượng          │ Độ chính xác │ Số câu hỏi │ Số ảnh   │
+├────────────────────┼──────────────┼────────────┼──────────┤
+│ ô tô               │    38.89%    │     18     │    18    │
+│ bát                │    37.50%    │     16     │    16    │
+│ xe tải             │    35.71%    │     14     │    14    │
+│ đèn giao thông     │    33.33%    │     12     │    12    │
+│ cốc                │    31.25%    │     16     │    16    │
+│ bồn rửa            │    30.00%    │     10     │    10    │
+│ người              │    26.60%    │     94     │    94    │
+│ bàn ăn             │    25.00%    │     20     │    20    │
+│ ghế                │    20.00%    │     25     │    25    │
+│ đồng hồ            │    20.00%    │     10     │    10    │
+└────────────────────┴──────────────┴────────────┴──────────┘
+
+Nhận xét:
+- Các phương tiện giao thông (ô tô, xe tải, đèn giao thông) có độ chính xác 
+  tương đối cao (33-39%)
+- Các đồ vật trong nhà (bát, cốc, bồn rửa) cũng có hiệu suất khá (30-38%)
+- Ngay cả đối tượng có độ chính xác cao nhất cũng chỉ đạt ~39%, cho thấy 
+  model còn nhiều hạn chế
+
+
+C. ĐỐI TƯỢNG CÓ ĐỘ CHÍNH XÁC THẤP
+
+Một số đối tượng có độ chính xác đặc biệt thấp:
+- sách: 7.69% (13 câu hỏi)
+- ba lô: 10.00% (10 câu hỏi)
+- tv: 14.29% (14 câu hỏi)
+- chai: 17.65% (17 câu hỏi)
+
+
+III. PHÂN TÍCH THEO ẢNH
+================================================================================
+
+A. MỐI QUAN HỆ GIỮA SỐ LƯỢNG ĐỐI TƯỢNG VÀ ĐỘ CHÍNH XÁC
+
+Từ biểu đồ scatter plot, ta thấy:
+- Xu hướng: y = -0.79x + 28.94
+- Hệ số góc âm (-0.79) cho thấy khi số lượng đối tượng trong ảnh tăng, 
+  độ chính xác có xu hướng giảm nhẹ
+- Điều này có thể do:
+  + Ảnh có nhiều đối tượng phức tạp hơn
+  + Model khó tập trung vào đối tượng liên quan đến câu hỏi
+  + Nhiễu từ các đối tượng không liên quan
+
+
+B. TOP 5 ẢNH CÓ ĐỘ CHÍNH XÁC CAO NHẤT (100%)
+
+1. Image 442980: ngựa vằn
+2. Image 481214: cà vạt, người
+3. Image 559073: mèo, vali
+4. Image 347962: chai, xe máy, người, túi xách
+5. Image 67749: xe tải, người, chậu cây, ô tô, đèn giao thông
+
+Đặc điểm chung:
+- Các ảnh này thường có đối tượng đặc trưng, dễ nhận diện
+- Một số có nhiều đối tượng nhưng vẫn đạt 100% (ví dụ: Image 67749)
+
+
+C. TOP 5 ẢNH CÓ ĐỘ CHÍNH XÁC THẤP NHẤT (0%)
+
+1. Image 368879: ghế, chai, người, bánh pizza, cốc
+2. Image 335093: ghế, điều khiển, chậu cây, máy tính xách tay, sách
+3. Image 429386: ô tô
+4. Image 499957: cốc, sách, bàn ăn, kéo
+5. Image 295199: nhà vệ sinh
+
+Đặc điểm chung:
+- Một số ảnh có nhiều đối tượng nhỏ, phức tạp
+- Ngay cả ảnh đơn giản (chỉ có ô tô) cũng có thể bị sai
+
+
+IV. KẾT LUẬN VÀ KHUYẾN NGHỊ
+================================================================================
+
+1. ĐIỂM MẠNH:
+   ✓ Model hoạt động tốt với một số loại đối tượng cụ thể (phương tiện giao 
+     thông, đồ vật trong nhà)
+   ✓ 26.22% ảnh đạt độ chính xác hoàn hảo (100%)
+   ✓ Có khả năng xử lý ảnh có nhiều đối tượng trong một số trường hợp
+
+2. ĐIỂM YẾU:
+   ✗ Độ chính xác trung bình thấp (26.22%)
+   ✗ 73.78% ảnh có độ chính xác dưới 20%
+   ✗ Hiệu suất không ổn định (độ lệch chuẩn cao: 44.12%)
+   ✗ Khó khăn với một số loại đối tượng (sách, ba lô, tv, chai)
+   ✗ Độ chính xác giảm khi số lượng đối tượng trong ảnh tăng
+
+3. KHUYẾN NGHỊ CẢI THIỆN:
+
+   a) Về dữ liệu:
+      - Thu thập thêm dữ liệu cho các đối tượng có độ chính xác thấp
+      - Cân bằng dataset giữa các loại đối tượng
+      - Tăng cường data augmentation cho ảnh phức tạp
+
+   b) Về model:
+      - Cải thiện cơ chế attention để tập trung vào đối tượng liên quan
+      - Thêm module phát hiện đối tượng tốt hơn
+      - Tăng số lượng iterations trong hierarchical co-attention
+      - Thử nghiệm với các backbone mạnh hơn
+
+   c) Về training:
+      - Sử dụng curriculum learning (từ ảnh đơn giản đến phức tạp)
+      - Áp dụng focal loss để tập trung vào các trường hợp khó
+      - Tăng thời gian training hoặc điều chỉnh learning rate
+
+   d) Về evaluation:
+      - Phân tích sâu hơn các trường hợp sai để hiểu nguyên nhân
+      - Đánh giá riêng theo loại câu hỏi (what, where, how many, etc.)
+      - So sánh với các baseline models khác
+
+4. MỤC TIÊU CẢI THIỆN:
+   - Ngắn hạn: Nâng độ chính xác trung bình lên 40-50%
+   - Trung hạn: Giảm tỷ lệ ảnh có độ chính xác <20% xuống dưới 50%
+   - Dài hạn: Đạt độ chính xác >60% trên toàn bộ dataset
+
+
+================================================================================
+Ngày tạo báo cáo: 2026-01-08
+Phiên bản model: Iterative Hierarchical Co-Attention
+Dataset: DS102 New Data (1,050 samples)
+================================================================================

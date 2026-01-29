@@ -47,6 +47,8 @@ class Vivqav2Dataset(data.Dataset):
 
             annotations.append(annotation)
 
+        return annotations
+
     def __getitem__(self, idx: int):
         item = self.annotations[idx]
         image_id = item["image_id"]
@@ -55,7 +57,7 @@ class Vivqav2Dataset(data.Dataset):
         features = self.load_features(int(file_name.split(".")[0]))
         question = item["question"]
         question_tokens = self.vocab.encode_question(question)
-        answer = item["answers"]
+        answer = item["answer"]
 
         return Instance(
             id=item["id"],

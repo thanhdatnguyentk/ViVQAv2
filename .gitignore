@@ -9,5 +9,13 @@ __pycache__
 examine*
 
 statistic.ipynb
-
+*.rar
 *.zip
+*.bin
+hf_models/
+hf_vevn/
+BartPhoBeit/
+*.csv
+*.xlsx
+analysis_results/
+temp_viconsformer/
