@@ -50,10 +50,11 @@ TRAINING:
     - F1
     - Precision
     - Recall
+    - METEOR
   
 MODEL:
   ARCHITECTURE: MCAN
-  NAME: mcan_region_x152++_faster_rcnn
+  NAME: mcan_region_x152++_faster_rcnn_vivqav2_2
   DEVICE: cuda
   D_MODEL: 512
   VISION_EMBEDDING:

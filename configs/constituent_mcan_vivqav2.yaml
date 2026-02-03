@@ -50,10 +50,11 @@ TRAINING:
     - F1
     - Precision
     - Recall
+    - METEOR
   
 MODEL:
   ARCHITECTURE: ConstituentMCAN
-  NAME: constituent_mcan_vivqav2
+  NAME: constituent_mcan_vivqav2_2
   DEVICE: cuda
   D_MODEL: 512
   CONSTITUENT_LAYERS: 3

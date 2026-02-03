@@ -79,7 +79,7 @@ class ConstituentMCAN(BaseClassificationModel):
             elif mask.dim() == 3: # (b, 1, s)
                 mask = mask.view(mask.size(0), mask.size(-1))
         
-        text_features = self.constituent_encoder(text_features, mask)
+        text_features, break_probs = self.constituent_encoder(text_features, mask)
         # ----------------------------------------------------------------------
 
         # SA
@@ -107,4 +107,4 @@ class ConstituentMCAN(BaseClassificationModel):
         output = self.layer_norm(self.vision_proj(weighted_vision_features) + self.text_proj(weighted_text_features))
         output = self.classify(output)
 
-        return F.log_softmax(output, dim=-1)
+        return F.log_softmax(output, dim=-1), break_probs

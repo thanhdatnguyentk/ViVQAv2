@@ -20,9 +20,9 @@ class PhrasalEncoder(nn.Module):
     Self-attention encoder with phrasal score propagation across layers.
     
     Implements Co-Text Module from ViWordFormer:
-    - Each layer receives phrasal features from the previous layer
-    - Gated fusion prevents phrasal information loss in deep networks
-    - Phrasal scores flow through the encoder via shortcut connections
+    - Each layer updates the phrasal score matrix based on historical context.
+    - Initial running_phrasal_scores is None.
+    - Phrasal scores are passed and updated sequentially.
     """
 
     def __init__(self, config):
@@ -39,34 +39,23 @@ class PhrasalEncoder(nn.Module):
 
     def forward(self, features: torch.Tensor, padding_mask: torch.Tensor):
         """
-        Forward pass with phrasal feature propagation.
-        
-        Args:
-            features: Input tensor (batch_size, seq_len, d_model)
-            padding_mask: Padding mask for attention
-        
-        Returns:
-            out: Encoded features with phrasal-aware attention
+        Forward pass with phrasal score propagation (Co-Text).
         """
         # Initial embedding with positional encoding
         out = self.layer_norm(features) + self.pos_embedding(features)
         
-        # Phrasal features for Co-Text propagation (shortcut connection)
-        phrasal_features = None
+        # Initialize running phrasal scores (Co-Text state)
+        running_phrasal_scores = None
         
         for layer in self.layers:
-            # Each layer receives phrasal features from previous layer
-            out, phrasal_scores = layer(
+            # Each layer receives and updates the running phrasal scores
+            out, running_phrasal_scores = layer(
                 queries=out, 
                 keys=out, 
                 values=out, 
                 attention_mask=padding_mask,
-                phrasal_features=phrasal_features
+                prev_phrasal_scores=running_phrasal_scores
             )
-            
-            # Update phrasal features for next layer (Co-Text shortcut)
-            # Use current layer output as phrasal context for next layer
-            phrasal_features = out
 
         return out
 
@@ -76,8 +65,7 @@ class PhrasalGuidedAttentionEncoder(nn.Module):
     """
     Guided attention encoder with phrasal-aware cross-modal attention.
     
-    Based on Deep Modular Co-Attention Network (MCAN) architecture,
-    enhanced with phrasal score propagation for Vietnamese text.
+    Refactored to use running_phrasal_scores for language structure propagation.
     """
 
     def __init__(self, config):
@@ -97,33 +85,21 @@ class PhrasalGuidedAttentionEncoder(nn.Module):
                 language_features: torch.Tensor, language_padding_mask: torch.Tensor):
         """
         Forward pass with guided attention and phrasal propagation.
-        
-        Args:
-            vision_features: Visual features (batch_size, n_regions, d_model)
-            vision_padding_mask: Mask for visual features
-            language_features: Text features (batch_size, seq_len, d_model)
-            language_padding_mask: Mask for text features
-        
-        Returns:
-            out: Visual features enhanced by language guidance
         """
-        # Initial embedding with positional encoding
+        # Initial embedding
         out = self.layer_norm(vision_features) + self.pos_embedding(vision_features)
         
-        # Phrasal features for Co-Text propagation
-        phrasal_features = None
+        # Initialize running phrasal scores for guiding modality (language)
+        running_phrasal_scores = None
         
         for guided_attn_layer in self.guided_attn_layers:
-            out, phrasal_scores = guided_attn_layer(
+            out, running_phrasal_scores = guided_attn_layer(
                 queries=out,
                 keys=language_features,
                 values=language_features,
                 self_attention_mask=vision_padding_mask,
                 guided_attention_mask=language_padding_mask,
-                phrasal_features=phrasal_features
+                prev_phrasal_scores=running_phrasal_scores
             )
-            
-            # Update phrasal features for next layer
-            phrasal_features = out
 
         return out

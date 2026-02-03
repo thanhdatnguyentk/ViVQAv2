@@ -4,6 +4,7 @@ Phrasal-aware Attention Mechanisms for Vietnamese VQA.
 Implements Phrasal Lexeme module from ViWordFormer paper:
 - PhrasalScaledDotProductAttention: Computes phrasal scores via Bilinear layer
   and integrates them into standard scaled dot-product attention.
+  Refactored to follow ViWordFormer (Eq 2, 3, 4, 8).
 """
 
 import torch
@@ -19,13 +20,6 @@ class PhrasalScaledDotProductAttention(nn.Module):
     
     The Phrasal Score P(i,j) captures the likelihood that tokens i and j 
     belong to the same phrase (cụm từ) in Vietnamese syllable-level input.
-    
-    Attention formula:
-        A = (Q @ K^T) / sqrt(d_k)
-        P = sigmoid(Bilinear(x_i, x_j))  for all token pairs (i,j)
-        A_final = softmax(A + lambda * log(P + eps))
-    
-    GPU-optimized: Uses tensor broadcasting instead of for-loops.
     """
 
     def __init__(self, config):
@@ -73,50 +67,51 @@ class PhrasalScaledDotProductAttention(nn.Module):
         """
         Compute Phrasal Score matrix P for all token pairs (i, j).
         
-        Memory-efficient implementation using matrix multiplication:
-        P(i,j) = x_i^T * W * x_j + b
-        Implemented as P = (x @ W) @ x.T + b
+        Simulates Neighboring logic (Eq 2, 3, 4) using vectorization.
         
         Args:
             x: Input tensor of shape (batch_size, seq_len, d_model)
         
         Returns:
-            P: Phrasal score matrix of shape (batch_size, seq_len, seq_len)
-               Values are in range (0, 1) after sigmoid activation.
+            P_current: Phrasal score matrix of shape (batch_size, seq_len, seq_len)
         """
         b_s, n, d = x.shape
         
         # self.phrasal_bilinear.weight has shape (1, d, d)
-        # self.phrasal_bilinear.bias has shape (1,)
         W = self.phrasal_bilinear.weight[0]  # (d, d)
         
-        # Step 1: x_W = x @ W -> (b_s, n, d)
+        # Content correlation (Part of Eq 4)
         x_W = torch.matmul(x, W)
+        P_content = torch.matmul(x_W, x.transpose(-1, -2)) + self.phrasal_bilinear.bias  # (b_s, n, n)
         
-        # Step 2: P = x_W @ x^T -> (b_s, n, n)
-        # Using transpose on the last two dimensions
-        P = torch.matmul(x_W, x.transpose(-1, -2))
+        # Neighboring distance bias (Eq 2, 3)
+        # Eq 2: dist(i, j) = |i - j|
+        indices = torch.arange(n, device=x.device)
+        dist = torch.abs(indices.unsqueeze(0) - indices.unsqueeze(1)).float()
         
-        # Step 3: Add bias and apply sigmoid
-        P = P + self.phrasal_bilinear.bias
-        P = torch.sigmoid(P)
+        # Eq 3: Neighboring score (simulation via distance-based penalty)
+        dist_bias = -torch.log(1 + dist)
         
-        return P
+        # Eq 4: Combining features and neighboring logic
+        P_current = torch.sigmoid(P_content + dist_bias.unsqueeze(0))
+        
+        return P_current
 
-    def forward(self, queries, keys, values, attention_mask=None, **kwargs):
+    def forward(self, queries, keys, values, attention_mask=None, prev_phrasal_scores=None, **kwargs):
         """
-        Forward pass with phrasal-enhanced attention.
+        Forward pass with phrasal-enhanced attention and Co-Text Module.
         
         Args:
             queries: (batch_size, n_queries, d_model)
             keys: (batch_size, n_keys, d_model)
             values: (batch_size, n_keys, d_model)
             attention_mask: Optional mask for attention
+            prev_phrasal_scores: Phrasal scores from previous layer (P_old)
         
         Returns:
             out: Attention output (batch_size, n_queries, d_model)
             att: Attention weights (batch_size, heads, n_queries, n_keys)
-            phrasal_scores: Phrasal score matrix (batch_size, n_queries, n_queries)
+            phrasal_scores: Updated phrasal scores (P_new)
         """
         b_s, nq = queries.shape[:2]
         nk = keys.shape[1]
@@ -129,31 +124,31 @@ class PhrasalScaledDotProductAttention(nn.Module):
         # Step 2: Compute standard attention scores A = (Q @ K^T) / sqrt(d_k)
         att = torch.matmul(q, k) / np.sqrt(self.d_k)  # (b_s, h, nq, nk)
 
-        # Step 3: Compute Phrasal Scores P for query tokens
-        # Only compute for self-attention case (queries == keys in terms of representation)
-        phrasal_scores = self.compute_phrasal_scores(queries)  # (b_s, nq, nq)
+        # Step 3: Compute current Phrasal Scores P_current
+        # Only compute for self-attention case (queries are used for language structure)
+        P_current = self.compute_phrasal_scores(queries)  # (b_s, nq, nq)
         
-        # Step 4: Integrate phrasal scores into attention
-        # For self-attention: nq == nk, directly add phrasal influence
-        # For cross-attention: nq != nk, we still use phrasal scores from queries
+        # Step 4: Co-Text Module (Eq 8): P_new = P_old + (1 - P_old) * P_current
+        if prev_phrasal_scores is not None:
+            phrasal_scores = prev_phrasal_scores + (1 - prev_phrasal_scores) * P_current
+        else:
+            phrasal_scores = P_current
+            
+        # Step 5: Integrate phrasal scores into attention
         if nq == nk:
             # Self-attention case: A_final = A + lambda * log(P + eps)
             # Expand phrasal scores for multi-head: (b_s, nq, nk) -> (b_s, 1, nq, nk)
             phrasal_log = self.lambda_param * torch.log(phrasal_scores.unsqueeze(1) + 1e-9)
             att = att + phrasal_log
-        else:
-            # Cross-attention case: phrasal scores capture query structure
-            # Apply phrasal bias only for query side coherence (optional enhancement)
-            pass
 
-        # Step 5: Apply attention mask if provided
+        # Step 6: Apply attention mask if provided
         if attention_mask is not None:
             att = att + attention_mask
 
-        # Step 6: Softmax normalization
+        # Step 7: Softmax normalization
         att = torch.softmax(att, dim=-1)
 
-        # Step 7: Compute output
+        # Step 8: Compute output
         out = torch.matmul(att, v).permute(0, 2, 1, 3).contiguous().view(b_s, nq, self.h * self.d_v)
         out = self.fc_o(out)
 

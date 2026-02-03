@@ -48,6 +48,7 @@ TRAINING:
     - F1
     - Precision
     - Recall
+    - METEOR
 
 
 TRAINING:

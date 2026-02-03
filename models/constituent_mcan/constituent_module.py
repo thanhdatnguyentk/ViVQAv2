@@ -147,6 +147,6 @@ class QuestionConstituentEncoder(nn.Module):
             break_probs.append(break_prob)
 
         x = self.norm(x)
-        # break_probs = torch.stack(break_probs, dim=1) # (bs, num_layers, head, seq_len, seq_len)
+        break_probs = torch.stack(break_probs, dim=1) # (bs, num_layers, head, seq_len, seq_len)
 
-        return x
+        return x, break_probs

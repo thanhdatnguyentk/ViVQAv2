@@ -150,13 +150,14 @@ def main():
         acc = s.get('Accuracy', 0)
         f1 = s.get('F1', 0)
         cider = s.get('CIDEr', 0)
+        meteor = s.get('METEOR', 0)
         bleu1 = s.get('BLEU', [0,0,0,0])[0]
         bleu2 = s.get('BLEU', [0,0,0,0])[1]
         bleu3 = s.get('BLEU', [0,0,0,0])[2]
         bleu4 = s.get('BLEU', [0,0,0,0])[3]
         rouge = s.get('ROUGE', 0)
         
-        print(f"{res['filename'][:30]:<30} | {acc:.4f} | {f1:.4f} | {cider:.4f} | {bleu1:.4f} | {bleu2:.4f} | {bleu3:.4f} | {bleu4:.4f} | {rouge:.4f}")
+        print(f"{res['filename'][:30]:<30} | {acc:.4f} | {f1:.4f} | {cider:.4f} | {bleu1:.4f} | {bleu2:.4f} | {bleu3:.4f} | {bleu4:.4f} | {rouge:.4f} | {meteor:.4f}")
     print("="*85)
 
 if __name__ == "__main__":

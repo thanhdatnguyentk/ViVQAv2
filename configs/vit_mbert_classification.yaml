@@ -50,6 +50,7 @@ TRAINING:
     - F1
     - Precision
     - Recall
+    - METEOR
 
 MODEL:
   ARCHITECTURE: ViTmBERTClassification

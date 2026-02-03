@@ -63,6 +63,15 @@ TRAINING:
   EVALUATING_BEAM_SIZE: 1
   PATIENCE: 5
 
+  VERBOSE_SCORES:
+    - CIDEr
+    - BLEU
+    - ROUGE
+    - METEOR
+    - Accuracy
+    - F1
+    - Precision
+    - Recall
 MODEL:
   ARCHITECTURE: MMF_M4C
   NAME: small_mmf_m4c_vinvl

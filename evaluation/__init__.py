@@ -8,8 +8,8 @@ from .precision import Precision
 from .recall import Recall
 
 def compute_scores(gts, gen):
-    # metrics = (Bleu(), Meteor(), Rouge(), Cider(), Accuracy(), Precision(), Recall(), F1())
-    metrics = (Bleu(), Rouge(), Cider(), Accuracy(), Precision(), Recall(), F1())
+    metrics = (Bleu(), Meteor(), Rouge(), Cider(), Accuracy(), Precision(), Recall(), F1())
+
  
     all_score = {}
     all_scores = {}

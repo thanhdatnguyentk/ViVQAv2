@@ -3,7 +3,7 @@ TASK: ClassificationTask
 DATASET:
   FEATURE_DATASET:
     TYPE: Vivqav2FeatureDataset
-    BATCH_SIZE: 16
+    BATCH_SIZE: 64
     WORKERS: 0
     FEATURE_PATH:
       FEATURES: features\vinvl_vinvl
@@ -50,10 +50,11 @@ TRAINING:
     - F1
     - Precision
     - Recall
+    - METEOR
   
 MODEL:
   ARCHITECTURE: PhrasalMCAN
-  NAME: mcan_phrasal_vivqav2_2
+  NAME: mcan_phrasal_vivqav2_3
   DEVICE: cuda
   D_MODEL: 512
   

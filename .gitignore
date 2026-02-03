@@ -8,8 +8,9 @@ hf_models
 hf_vevn
 *.json
 examine*
+LLMS
 
 statistic.ipynb
-
 *.zip
 *.csv
+*.rar

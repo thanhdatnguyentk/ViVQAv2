@@ -169,7 +169,7 @@ class ClassificationTask(BaseTask):
             # scores = {key: value for key, value in scores.items() if key in self.config.TRAINING.VERBOSE_SCORES}
             logger.info("Validation scores %s", scores)
             val_score = scores[self.score]
-
+            logger.info("Patience: %d", patience)
             # Prepare for next epoch
             best = False
             if val_score > best_val_score:

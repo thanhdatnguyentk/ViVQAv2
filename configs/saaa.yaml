@@ -41,6 +41,15 @@ TRAINING:
   GET_SCORES: True
   PATIENCE: 5
 
+  VERBOSE_SCORES:
+    - CIDEr
+    - BLEU
+    - ROUGE
+    - METEOR
+    - Accuracy
+    - F1
+    - Precision
+    - Recall
 MODEL:
   ARCHITECTURE: SAAA
   NAME: saaa_region_x152++_faster_rcnn
