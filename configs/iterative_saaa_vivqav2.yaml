@@ -52,7 +52,7 @@ TRAINING:
   SCORE: CIDEr
   TRAINING_BEAM_SIZE: 5
   EVALUATING_BEAM_SIZE: 3
-  PATIENCE: 5
+  PATIENCE: 10
 
   VERBOSE_SCORES:
     - CIDEr
@@ -65,7 +65,7 @@ TRAINING:
     - Recall
 MODEL:
   ARCHITECTURE: IterativeSAAA
-  NAME: iterative_saaa_region_x152++_faster_rcnn
+  NAME: iterative_saaa_region_x152++_faster_rcnn_vivqav2
   DEVICE: cuda
   D_MODEL: 512
   VISION_PROCESSOR:

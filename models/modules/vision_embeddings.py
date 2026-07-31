@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from transformers import ViTFeatureExtractor, ViTModel
+from transformers import ViTImageProcessor, ViTModel
 from PIL import Image
 from typing import List
 
@@ -90,7 +90,7 @@ class ViTEmbedding(nn.Module):
 
         self.device = torch.device(config.DEVICE)
 
-        self.feature_extractor = ViTFeatureExtractor.from_pretrained(config.PRETRAINED_NAME)
+        self.feature_extractor = ViTImageProcessor.from_pretrained(config.PRETRAINED_NAME)
         self.backbone = ViTModel.from_pretrained(config.PRETRAINED_NAME)
         # freeze all parameters of pretrained model
         for param in self.backbone.parameters():

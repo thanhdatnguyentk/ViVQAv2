@@ -1,0 +1,280 @@
+6.1. Effect of Question and Answer Lengths on Experimental Results
+Intuitively, we can use the LCS or LSS algorithm (Section 3) to analyze
+the results of the experimental methods using the total number of semantic
+dependencies or semantic trees. However, such a way is not general as it
+concentrates on the linguistic complexity of languages. We argue that ana-
+lyzing based on the length of sentences is more natural as people do not pay
+attention to how complicated the words they said but to how is the length of
+sentences they made. People who prefer using words or phrases to respond
+to given questions usually speak faster than those who respond politely in
+sentences. Moreover, as shown in Figure 13b, the longer the sentences, the
+morelinguisticallycomplicatedtheyare. Thisisintuitiveasmoretokenslead
+34
+--- PAGE 35 ---
+Figure 12: Our proposed methods achieved better results compared to their respective
+baselines.
+to more dependencies occurring between them. Thus, analyzing the results
+based on the length of sentences is more comprehensive because it covers
+both habits of people when using languages and the linguistic complexity of
+sentences.
+For ease of analysis, we divide questions and answers into different groups
+based ontheir length, or thetotal numberof tokens theyhave. Tokensinthis
+Section are achieved in the same way as in Section 3 by using VnCoreNLP
+[51] to perform word segmentation. More specifically, we define the groups
+Group Length (n)
+Short (S) n ≤ 5
+Medium (M) 5 < n ≤ 10
+Long (L) 10 < n ≤ 15
+Very Long (XL) n > 15
+(a)
+(b)
+Figure13: Groupsofquestionsandanswersbasedontheirtotalnumberoftokens(a)and
+total number of dependencies based on the length of sentence (b).
+35
+--- PAGE 36 ---
+of questions and answers as in Figure 13a. We evaluate the baselines and
+our proposed methods on each group of questions and answers with this
+definition. At first, we start with examining the results of the baselines and
+proposed models on groups of questions. Details are given in Figure 14.
+(a)SAAA (b)MCAN (c)LoRRA
+(d)M4C (e)FST (f)QuMLAG
+(g)MLPAG
+Figure 14: Results of experimental methods on length-based groups of questions.
+According to Figure 14, most of the classifier-based methods achieve the
+highest results on group M questions on most metrics. Furthermore, the
+BLEU scores of the classifier-based methods are relatively low, even lower
+than 0.2. These scores show that the answers of classifier-based methods
+poorlymatchthegroundtruthanswer, sotheirresultsareunreliabletointer-
+pret and conclude. On the other hand, the generator-based methods achieve
+the best results on S questions, then gradually decline when the length of
+questions increases, except for QuMLAG which has the best results on group
+M questions, and MLPAG which has approximately the same results on
+group S and M questions then downgrades its score when receiving longer
+questions. These results indicate that generator-based methods find it easier
+to cope with the group S and M questions as they are the most-appeared
+questions in the dataset. However, it also points out that these methods
+36
+--- PAGE 37 ---
+struggle to read and understand long questions in Vietnamese whose linguis-
+tic complexity is proportional to the length of respective sentences (Figure
+13b).
+(a)SAAA (b)MCAN (c)LoRRA
+(d)M4C (e)FST (f)QuMLAG
+(g)MLPAG
+Figure 15: Results of experimental methods on length-based groups of answers.
+Turning to the groups of answers, similar to the analysis based on the
+length of questions, the results of classifier-based methods are low, espe-
+cially in BLEU@2, BLEU@3, and BLEU@4 scores, which leads to analyz-
+ing and interpreting their results being not reliable. Hence, we concentrate
+on the results of the generator-based methods. According to Figure 15, all
+generator-based methods share the same pattern of their results on all groups
+ofanswers, andallofthemachievethebestscoresongroupManswers. From
+Figure 5, most of the answers are in group M. This distribution directly in-
+fluences the results of the methods as they are trained primarily to generate
+group M answers, leading to the results shown in Figure 15. On the other
+hand, generator-based methods have difficulty generating longer answers,
+such as those in groups L and XL. This indicates that these methods suffer
+hassle while yielding long answers in Vietnamese.
+37
+--- PAGE 38 ---
+Surprisingly, althoughtheanswersofgroupSoccupyasignificantpropor-
+tion in the answer distribution, the results of the generator-based methods
+on these answers are not as good as on the answers of group M, even though
+generally group S answers are more straightforward to construct than other
+groups of answers. To clarify this phenomenon, we consider investigating
+how the answers of generator-based methods match the ground truth an-
+swers. We find that on questions with short answers, the generated answers
+of generator-based methods have approximately 9.29% of their tokens re-
+peated from the questions, while this rate is 13% on questions with medium
+answers. On questions having long and very long answers, this rate is 13.13%
+and 10.87%, respectively. This implies that on group M answers, generator-
+based models tend to repeat some first tokens of questions when starting
+to construct the answers as the way Vietnamese people normally do while
+answering (e.g. "chiếc xe đạp đang được dựng ở đâu?" (where is the
+bike leaning against?) ⇒ "chiếc xe đạp đang được dựng ở bên cạnh cái
+giếng" (the bike is leaning against the well)). Accordingly, the generator-
+based methods easily obtain the highest results on group M answers as they
+have many matched tokens with the ground truth answers. However, on
+longer answers, their results drop due to the lack of information in the gen-
+erated answers compared to human-given answers. In addition, short an-
+swers are primarily words or phrases. However, generator-based methods
+tend to produce group M answers. Such answers construction strategy of
+generator-based methods not only causes redundant tokens that affect the
+overall results but may also potentially give wrong information about ob-
+jects, locations, quantities, colors, or scene texts in answers, hence obtaining
+low scores on group S answers.
+6.2. Effect of Question Types on Experimental Results
+In order to analyze how models perform on different targeted contents
+of questions, here we examine the predictions for questions on several fairly
+variated aspects such as colors, quantities, and locations. We define the type
+of question based on such aspects that questions may exploit. This analy-
+sis monitors how models may pay attention to visual details and corporate
+descriptive words into the desired answers. We first use regular expressions
+to prepare rule-based algorithms for question-type classification. For each
+type of question, we calculate the evaluation scores for every experimental
+method just like in the above sections. As illustrated in Figure 16, all models
+elicit the same pattern that the questions on locations are more challenging
+38
+--- PAGE 39 ---
+(a)SAAA (b)MCAN (c)LoRRA
+(d)M4C (e)FST (f)QuMLAG
+(g)MLPAG
+Figure 16: Results on question types for each experimental method.
+than those on colors and quantities. This may be drawn from the fact that
+location information is more complicated, unlike colors and quantities which
+can be interpreted more simply.
+In Figure 17, we compare the scores of the experimental methods for
+each type of question. In particular, more sophisticated models based on
+transformer architecture perform better in describing the details required to
+answer these types of questions. On the overall pattern, the models show a
+similar order of performance for each type where the generative alternatives
+achieve higher scores than the original models. However, these findings are
+proportional to the main result in Section 5.5 and may blend in the overall
+performance of experimental methods on giving the whole answers, which do
+not describe how correctly the models produce the exact words to interpret
+colors, quantities, or locations in the answers for those types of question.
+To analyze the correctness of experimental methods in giving answers for
+each type of question, we suggest using accuracy, as defined as follows:
+39
+--- PAGE 40 ---
+(a)Colors (b)Quantities
+(c)Locations
+Figure 17: Results of experimental methods on each question type.
+Number_of_correct_terms
+type
+Accuracy = (27)
+type Total_questions
+type
+We used this metric to measure the percentage of giving the right terms
+as in the gold answers. For questions on colors, we track the color word
+in the prediction and compare it with the one in the corresponding gold
+answer. We also do the same for questions on quantities but not for locations
+since this factor is highly variable in the text presentation. Therefore, it is
+more feasible to measure the correctness of color and quantity predictions,
+which are enough to observe how well models may achieve at attending to
+the visual properties of objects. The plots in Figure 18 show that M4C
+outperforms others in color and quantity predictions. The inter- and intra-
+modality relations modeling of M4C [19] allows it to effectively associate
+visual information along with the collocation between the words in questions
+and answers, which facilitates itself with visual and textual information in
+the prediction of details such as colors and quantities. On the other hand,
+40
+--- PAGE 41 ---
+the generative renovation of baseline methods yields substantial accuracy
+increment on predictions of such terms. This suggests that when modified to
+formulate longer answers, the experimental methods tend to use these terms
+more correctly in the answers, which proves that the attentive generator
+module plays an important role in reinforcing the quality and details of the
+predictions in the final stage.
+Figure 18: Accuracy of experimental methods on giving the correct term in prediction for
+each type of question.
+6.3. Effect of Scene Text Images on Experimental Results
+Logically M4C and MLPAG were provided with Dynamic Pointer Net-
+work [19] in their decoder module, or in other words, they similarly have the
+ability to use scene texts in their answers so they must have better results
+compared to non-read ability methods such as SAAA, MCAN, FST, and
+QuMLAG. However, from Table 6 the actual results of M4C and MLPAG
+were even lower than those of QuMLAG which is not able to read and use
+scene texts, especially MLPAG even yielded better results than M4C. To an-
+alyze these results, we first observed the difference in answer features among
+VQA datasets. According to Figure 5, the TextVQA dataset although was
+claimed to have open-ended questions and answers, its answers distribution
+shares the same characteristic as other Non-text QA VQA datasets such as
+VQAv2, which means most answers in TextVQA have lengths of 1, 2 and 3.
+Or, simply speaking, in the TextVQA dataset, scene texts are copied from
+images to be the answers. Therefore M4C method, when trained on the
+41
+--- PAGE 42 ---
+Question: số điện thoại Question: quán xấu quắc bán những món ăn gì? Question: trường trung học cơ Question: đi trên đường đồng khởi Question: buổi lễ này được tổ chức
+của cửa hàng là gì? (what dishes does xấu quắc eatery serve?) sở tên gì? (what name is the tìm ngôi nhà số mấy để mua máy vào ngày nào? (what day is this event
+(what is the phone Human: bán các loại món ốc (serves snail dishes) secondary school?) tính tại cửa hàng này? (what held?)
+number of the shop?) FST: quán ăn bán món nướng (the eatery serves Human: tên là trần phú (the number house on đồng khởi street Human: ngày 12 tháng 4 năm 2018
+Human: 0972347255 grills) name is trần phú) is to find to buy computer at this (April 12, 2018)
+FST: số điện thoại của QuMLAG: phở bò gia truyền (traditional beef pho) FST: nhà hàng nằm ở đường sư store?) FST: hội sách (book fair)
+tiệm trà chanh (the MLPAG: quán ăn quán ốc (snail eatery) phạm (restaurant locates on Human: tìm ngôi nhà số 589 (find QuMLAG: ngày 30 tháng 4 năm 2021
+phone number of the M4C: bán các món ăn làm từ ốc (serves dishes pedagogy street) house number 589) (April 30, 2021)
+lemon tea shop) made from snail) QuMLAG: trường tiểu học cơ sở FST: cơm niêu sài gòn (sai gon MLPAG: ngày 9 tháng 9 năm 2020
+QuMLAG: số điện thoại hữu (huu secondary school) com nieu) (September 9, 2020)
+của cửa hàng là cửa MLPAG: tên là văn phú (the QuMLAG: tại khu đường hùng M4C: ngày 14 tháng 5 năm 1954 (May
+hàng (the phone name is văn phú) vương (hùng vương street) 14, 1954)
+number of the shop is M4C: trung tâm trần phú (trần MLPAG: số 2 (number 2)
+shop) phú center) M4C: số nhà đường trần khởi tại số
+MLPAG: số điện thoại 089 (on trần khởi street at number
+của cửa hàng là 089)
+0949092020 (the phone
+number of the shop is
+0949092020)
+M4C: số điện thoại của
+cửa hàng là 0972 347
+(the phone number of
+the shop is 0972 347)
+Question: những người này đi từ đâuQuestion: trang web để liên hệ Question: quán này nằm ở đâu? (where Question: xe gì bị cấm đi qua đây? Question: một ký khoai lang nhật có
+ra? (where are these people coming quảng cáo là gì? (what is the website is this eatery?) (what vehicle is prohibited?) giá bao nhiêu tiền? (how much is a
+out from?) to contact for advertisement?) Human: quán này nằm ở 164 / 14 lý Human: xe máy (motorbike) kilo of japanese sweet potatoes?)
+Human: đi từ ga ninh bình ra (comingHuman: aloquangcao.net thường kiệt (this eatery is at 164/14 lý FST: khu vực cách ly (quarantine Human: 580 000 đồng một ký (580
+out from ninh bình train station) FST: số điện thoại của quán ăn này là thường kiệt street) zone) 000 dong a kilo)
+FST: đang bán hàng (selling) 0 313 582 228 (the phone number of FST: cửa hàng có tên là kim hằng (the QuMLAG: xe tải (truck) FST: có bốn quả ớt chuông có màu
+QuMLAG: từ những người (from the this eatery is 0313582228) name of the store is kim hằng) MLPAG: cấm máy (prohibit đỏ (there are four red peppers)
+people) QuMLAG: trang web . com QuMLAG: quán này nằm ở tp . vĩnh long machine) QuMLAG: một ký ớt có giá là 5 000
+MLPAG: từ phía sau cùng (from the MLPAG: www . com . vn (this store is in vinh long city) M4C: xe máy , xe máy và xe máy đồng (a kilo of chillies is 5 000 dong)
+back) M4C: www . com . com MLPAG: quán này nằm ở số 14 / 9 (this (motorbike, motorbike and MLPAG: 30 000 đồng (30 000 dong)
+M4C: đi du lịch sinh thái (go ecotour) store is at 14/9) motorbike) M4C: một ký khoai lang có giá là 35
+M4C: quán này nằm ở số 14 , kiệt (this 000 đồng (a kilo of sweet potatoes is
+store is at 14, kiet) 35 000 dong)
+Figure19: SeveralexamplesofourthreeproposedmethodsandM4C.Tokensingreenare
+copied from scene texts in the images.
+TextVQA dataset, tends to learn how to copy scene texts in images to use
+them as answers rather than using scene texts to provide detailed informa-
+tioninanswers. WhenbeingtrainedontheOpenViVQAdataset,open-ended
+answers require the method must have the ability to decide which available
+scene texts it will "copy" and where is the most suitable position it will
+"paste" in the answers. Hence the complexity is increased, and the copy-
+ing mechanism implemented by Dynamic Pointer Network does not work as
+expected.
+For non-reading architecture such as FST and QuMLAG, from Figure
+19, these two models obviously can not read scene text in images. Hence,
+they produced answers irrelevant to the given questions and images. In
+addition, MLPAG and M4C share the same behavior. According to Figure
+42
+--- PAGE 43 ---
+19, these two models did not work well in using scene text in answers. The
+frequency of using scene texts is low, and they usually use them at the end of
+answers. These results prove such Dynamic Pointer Network [19] proposed
+forM4CisadaptableforsimpleanswersasintheTextVQAdatasetwherethe
+whole answers are scene texts copied from images in usual natural language,
+this module can not tackle well how to use scene text to provide additional
+information for given questions. We need a better solution for this challenge
+of the OpenViVQA dataset.
+6.4. Why are QuMLAG and MLPAG better than M4C?
+BLEU@1 BLEU@2 BLEU@3 BLEU@4 METEOR ROUGE CIDEr
+FST 0.1020 0.0674 0.0445 0.0302 0.0809 0.1331 0.3566
+QuMLAG 0.3064 0.2408 0.1963 0.1649 0.1845 0.3222 1.2504
+Text-QA
+MLPAG 0.3589 0.2710 0.2115 0.1701 0.2075 0.3604 1.3758
+M4C 0.3315 0.2375 0.1730 0.1303 0.1962 0.3547 1.3191
+FST 0.2514 0.1743 0.1259 0.0909 0.1559 0.2747 0.8638
+QuMLAG 0.4090 0.3371 0.2870 0.2478 0.2408 0.4354 2.1359
+Non-textQA
+MLPAG 0.4464 0.3565 0.2942 0.2449 0.2534 0.4184 1.9377
+M4C 0.3960 0.3001 0.2341 0.1838 0.2252 0.4025 1.6545
+Table 7: Comparison of the three proposed methods and M4C between Text-QA and
+Non-text QA.
+From Table 6, we saw the abnormal results that M4C, despite its bet-
+ter results on English datasets such as TextVQA and OCR-VQA, has lower
+results than QuMLAG and MLPAG. As reported in Table 7, on Text QAs,
+the MLPAG achieved the best results on all metrics while the M4C is lower.
+However, these two models share the same architecture in the Answer Gener-
+ator module, and on several metrics (BLEU@2, BLEU@3, BLEU@4), M4C
+is lower than QuMLAG. On Non-text QA, MLPAG has better results than
+M4C on almost metrics. In addition, QuMLAG achieved the best results
+on BLEU@4, ROUGE, and CIDEr, and it leads MLPAG as well as M4C
+a far distance on CIDEr. Carefully observing, in both cases of Text-QA
+and Non-text QA in Table 7, as well as overall results in Table 6, MLPAG
+and QuMLAG which share the same color that they have a smaller size (in
+terms of total parameters) achieved better results than M4C which is more
+extensive. This implies that on the OpenViVQA dataset, large-size models
+such as M4C are not effective; hence we need a method having better ideas
+to effectively tackle the OpenViVQA dataset rather than depending on the
+power of large models and computing resources.
+43
+--- PAGE 44 ---

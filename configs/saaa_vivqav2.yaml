@@ -35,11 +35,11 @@ DATASET:
 
 TRAINING:
   CHECKPOINT_PATH: saved_models
-  LEARNING_RATE: 0.01
+  LEARNING_RATE: 0.005
   WARMUP: 10000
   SCORE: CIDEr
   GET_SCORES: True
-  PATIENCE: 5
+  PATIENCE: 10  
   VERBOSE_SCORES:
     - CIDEr
     - BLEU
@@ -52,7 +52,7 @@ TRAINING:
 
 MODEL:
   ARCHITECTURE: SAAA
-  NAME: saaa_region_x152++_faster_rcnn
+  NAME: saaa_region_x152++_faster_rcnn_vivqav2
   DEVICE: cuda
   D_MODEL: 512
   VISION_PROCESSOR:

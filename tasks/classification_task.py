@@ -180,7 +180,7 @@ class ClassificationTask(BaseTask):
                 patience += 1
 
             exit_train = False
-            if patience == self.patience:
+            if patience >= self.patience:
                 logger.info('patience reached.')
                 exit_train = True
 
